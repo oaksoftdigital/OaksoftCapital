@@ -8,7 +8,7 @@ export default function Footer() {
     >
       {/* Row de links */}
       <div
-        className="flex flex-col justify-center items-center gap-2 w-full lg:flex-row lg:gap-8"
+        className="flex flex-col justify-center items-center gap-2 w-full lg:flex-row lg:gap-8 text-md"
       >
         <a
           href="/privacy-policy"
@@ -19,7 +19,6 @@ export default function Footer() {
             color: 'rgba(255,255,255,0.40)',
             fontFamily: 'var(--font-abhaya-libre), serif',
             fontWeight: 800,
-            fontSize: '12px',
             lineHeight: '15px',
             letterSpacing: '1.8px',
             fontStyle: 'normal',
@@ -37,7 +36,6 @@ export default function Footer() {
             color: 'rgba(255,255,255,0.40)',
             fontFamily: 'var(--font-abhaya-libre), serif',
             fontWeight: 800,
-            fontSize: '12px',
             lineHeight: '15px',
             letterSpacing: '1.8px',
             fontStyle: 'normal',
@@ -48,14 +46,13 @@ export default function Footer() {
         </a>
       </div>
       {/* Row de copyright */}
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex justify-center items-center text-sm">
         <span
           className="text-center"
           style={{
             color: 'rgba(255,255,255,0.80)',
             fontFamily: 'var(--font-abhaya-libre), serif',
             fontWeight: 800,
-            fontSize: '9px',
             lineHeight: '24px',
             letterSpacing: '1.125px',
             fontStyle: 'normal',
