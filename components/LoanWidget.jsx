@@ -75,9 +75,13 @@ export default function LoanWidget() {
           collateralAmount: Number(amount || 0),
           collateralCode: selectedCollateral.code,
           collateralNetwork: selectedCollateral.network,
+          collateralLogo: getTokenLogo(depositList, selectedCollateral.code, selectedCollateral.network),
+
           loanAmount: Number(estimate.amount_to ?? 0),
           borrowCode: selectedBorrow.code,
           borrowNetwork: selectedBorrow.network,
+          borrowLogo: getTokenLogo(borrowList, selectedBorrow.code, selectedBorrow.network),
+
           duration: selectedDuration,
           ltv: Number(selectedLTV),
           apr:

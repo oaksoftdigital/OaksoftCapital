@@ -121,7 +121,6 @@ export default function ConfirmLoanModalView({
         {hasSummary ? (
           <>
             <div className="bg-transparent rounded-xl mb-3 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
               {/* ===== Loan + Collateral (display-only, widget look) ===== */}
               <div className="space-y-6 mb-4 w-full">
                 {/* ===== Loan (first) ===== */}
@@ -145,8 +144,8 @@ export default function ConfirmLoanModalView({
                         <div className="h-full bg-[#323841] rounded-2xl px-4 py-2">
                           <div className="w-full flex items-center gap-3 select-none cursor-default">
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                              {borrowIcon ? (
-                                <img src={borrowIcon} alt="" className="w-full h-full object-cover" />
+                              {summary.borrowLogo ? (
+                                <img src={summary.borrowLogo} alt="" className="w-full h-full object-cover" />
                               ) : (
                                 <span className="text-xs font-nolmal">
                                   {(summary.borrowCode || "?").slice(0, 1)}
@@ -191,8 +190,8 @@ export default function ConfirmLoanModalView({
                         <div className="h-full bg-[#323841] rounded-2xl px-4 py-2">
                           <div className="w-full flex items-center gap-3 select-none cursor-default">
                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                              {collateralIcon ? (
-                                <img src={collateralIcon} alt="" className="w-full h-full object-cover" />
+                              {summary.collateralLogo ? (
+                                <img src={summary.collateralLogo} alt="" className="w-full h-full object-cover" />
                               ) : (
                                 <span className="text-xs font-normal">
                                   {(summary.collateralCode || "?").slice(0, 1)}
@@ -218,6 +217,7 @@ export default function ConfirmLoanModalView({
               </div>
 
             </div>
+
             
             {/* informational divider */}
             <div className="grid grid-cols-2 gap-y-2 gap-x-6 sm:gap-x-10 text-sm mb-4">
@@ -257,7 +257,6 @@ export default function ConfirmLoanModalView({
                 </div>
               </div>
             </div>
-
             <div
               className="w-full mb-4"
               style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.10)" }}
@@ -297,8 +296,8 @@ export default function ConfirmLoanModalView({
                 value={address}
                 onChange={(e) => onAddressChange(e.target.value)}
                 placeholder="Wallet address"
-                className="w-full px-4 py-3 rounded-xl text-sm bg-[#161B26] text-white placeholder-white/50 caret-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{ border: "1.174px solid #1F242F" }}
+                className="w-full px-4 py-3 rounded-xl text-sm bg-[#161B26] text-white placeholder-white/50 caret-white border-[#1F242F] focus:border-[#95E100] focus:outline-none focus:ring-1 focus:ring-[#95E100]"
+                style={{ borderWidth: "1.174px" }}
               />
 
               <div className="mt-1 flex items-center justify-between">
