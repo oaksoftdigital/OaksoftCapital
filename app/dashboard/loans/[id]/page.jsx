@@ -9,6 +9,9 @@ import { doc, onSnapshot } from "firebase/firestore";
 import LoanDangerZoneBar from "@/features/loan/ui/LoanDangerZoneBar";
 
 import { getLoanById } from "@/features/loan/services/coinrabbit";
+import TokenChip from "@/features/loan/ui/TokenChip";
+
+
 
 /**
  * Helpers (safe + UI-friendly)
@@ -245,6 +248,21 @@ export default function Page() {
           phase: {phase || "-"} | status: {status || "-"}
         </div>
       )}
+      {docData?.ui && (
+        <>
+          <TokenChip
+            logo={docData.ui.borrow?.logo}
+            code={docData.ui.borrow?.code}
+            network={docData.ui.borrow?.network}
+          />
+          <TokenChip
+            logo={docData.ui.collateral?.logo}
+            code={docData.ui.collateral?.code}
+            network={docData.ui.collateral?.network}
+          />
+        </>
+      )}
+
 
       {/* ACTIVE: danger zone bar */}
       {!loading && !err && isActive && (

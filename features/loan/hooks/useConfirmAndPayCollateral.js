@@ -42,7 +42,7 @@ export function useConfirmAndPayCollateral({ summary, payoutNetwork }) {
         const network = payoutNetwork;
         if (!code || !network) {
           throw new Error(
-            "Missing payout currency/network to validate address"
+            "Missing payout currency/network to validate address",
           );
         }
 
@@ -51,13 +51,27 @@ export function useConfirmAndPayCollateral({ summary, payoutNetwork }) {
           throw new Error("Invalid payout address for this network");
 
         // 2) Confirm loan (your Next route -> CoinRabbit)
-        const confirmRes = await confirmLoan(loanId, payoutAddress);
+        //2.1 Prepare UI info (logos, codes, networks)
+        const ui = {
+          borrow: {
+            code: summary?.borrowCode ?? null,
+            network: summary?.borrowNetwork ?? null,
+            logo: summary?.borrowLogo ?? null,
+          },
+          collateral: {
+            code: summary?.collateralCode ?? null,
+            network: summary?.collateralNetwork ?? null,
+            logo: summary?.collateralLogo ?? null,
+          },
+        };
+
+        const confirmRes = await confirmLoan(loanId, payoutAddress, ui);
 
         // Collateral amount (best: store from estimate/create)
         const amountAtomic = getCollateralAmountAtomic(confirmRes, summary);
         if (!amountAtomic) {
           throw new Error(
-            "Missing collateralAmountAtomic (store it from estimate/create)"
+            "Missing collateralAmountAtomic (store it from estimate/create)",
           );
         }
 
@@ -93,7 +107,7 @@ export function useConfirmAndPayCollateral({ summary, payoutNetwork }) {
         setLoading(false);
       }
     },
-    [sendCollateral, summary, payoutNetwork]
+    [sendCollateral, summary, payoutNetwork],
   );
 
   return { run, loading, txId, error };

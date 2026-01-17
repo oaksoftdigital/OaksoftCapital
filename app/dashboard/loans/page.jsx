@@ -8,6 +8,7 @@ import { collection, onSnapshot, query, where, orderBy } from "firebase/firestor
 import LoanZonePill from "@/features/loan/ui/LoanZonePill";
 import useRefreshLoanZones from "@/features/loan/hooks/useRefreshLoanZones";
 import { usePathname } from "next/navigation";
+import TokenChip from "@/features/loan/ui/TokenChip";
 
 
 export default function Page() {
@@ -152,6 +153,20 @@ export default function Page() {
         >
           <div style={{ display: "grid", gap: 4 }}>
             <div style={{ fontWeight: 600 }}>Loan {l.loanId || l.id}</div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <TokenChip
+                logo={l.ui?.collateral?.logo}
+                code={l.ui?.collateral?.code}
+                network={l.ui?.collateral?.network}
+              />
+              <span style={{ color: "#999" }}>→</span>
+              <TokenChip
+                logo={l.ui?.borrow?.logo}
+                code={l.ui?.borrow?.code}
+                network={l.ui?.borrow?.network}
+              />
+            </div>
+
             <div style={{ fontSize: 12, color: "#666" }}>
               status: {l.status || l.coinrabbit?.status || "-"}
             </div>
@@ -202,6 +217,20 @@ export default function Page() {
         >
           <div style={{ display: "grid", gap: 4 }}>
             <div style={{ fontWeight: 600 }}>Loan {l.loanId || l.id}</div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <TokenChip
+                logo={l.ui?.collateral?.logo}
+                code={l.ui?.collateral?.code}
+                network={l.ui?.collateral?.network}
+              />
+              <span style={{ color: "#999" }}>→</span>
+              <TokenChip
+                logo={l.ui?.borrow?.logo}
+                code={l.ui?.borrow?.code}
+                network={l.ui?.borrow?.network}
+              />
+            </div>
+
             <div style={{ fontSize: 12, color: "#666" }}>
               phase: {l.phase || "-"} | status: {l.status || l.coinrabbit?.status || "-"}
             </div>

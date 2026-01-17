@@ -101,7 +101,7 @@ export async function createLoan(payload, opts = {}) {
   });
 }
 
-export async function confirmLoan(loanId, payoutAddress, opts = {}) {
+export async function confirmLoan(loanId, payoutAddress, ui = {}, opts = {}) {
   if (!loanId) throw new Error("confirmLoan requires loanId");
   if (!payoutAddress) throw new Error("confirmLoan requires payoutAddress");
 
@@ -109,7 +109,7 @@ export async function confirmLoan(loanId, payoutAddress, opts = {}) {
     method: "POST",
     auth: true,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ payoutAddress }),
+    body: JSON.stringify({ payoutAddress, ui }),
     ...opts,
   });
 }
@@ -131,7 +131,7 @@ export async function validateAddress(
   code,
   network,
   tag = null,
-  opts = {}
+  opts = {},
 ) {
   if (!address) throw new Error("validateAddress requires address");
   if (!code) throw new Error("validateAddress requires code");

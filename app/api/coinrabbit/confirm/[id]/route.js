@@ -19,19 +19,19 @@ export async function POST(req, { params }) {
     const { id: loanId } = await params;
 
     // 3) data from front
-    const { payoutAddress } = await req.json();
+    const { payoutAddress, ui } = await req.json();
 
     if (!loanId) {
       return NextResponse.json(
         { error: "Missing loanId in URL" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!payoutAddress) {
       return NextResponse.json(
         { error: "Missing payoutAddress" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -83,8 +83,23 @@ export async function POST(req, { params }) {
             payoutAddress,
             confirmedAt: now,
           },
+          //logos and codes for quick access in UI
+          ui: ui
+            ? {
+                borrow: {
+                  code: ui?.borrow?.code ?? null,
+                  network: ui?.borrow?.network ?? null,
+                  logo: ui?.borrow?.logo ?? null,
+                },
+                collateral: {
+                  code: ui?.collateral?.code ?? null,
+                  network: ui?.collateral?.network ?? null,
+                  logo: ui?.collateral?.logo ?? null,
+                },
+              }
+            : undefined,
         },
-        { merge: true }
+        { merge: true },
       );
 
       // Append-only event log (useful for debugging/audit, avoids bloating main doc)
@@ -102,7 +117,7 @@ export async function POST(req, { params }) {
     console.error("Confirm loan error:", e);
     return NextResponse.json(
       { error: e?.message || "Confirm loan failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
