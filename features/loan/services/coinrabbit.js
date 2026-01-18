@@ -255,3 +255,43 @@ export async function createPledgeRedemptionTx(id, payload, opts = {}) {
     ...opts,
   });
 }
+
+// Save user email (for anon + logged users) in Firestore via server route
+export async function saveUserEmail(email, opts = {}) {
+  const clean = String(email || "")
+    .trim()
+    .toLowerCase();
+  if (!clean) throw new Error("saveUserEmail requires email");
+
+  // reuse your auth token helper
+  const idToken = await getIdToken();
+  if (!idToken) throw new Error("No idToken");
+
+  const r = await fetch(`/api/user/email`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+      ...(opts.headers || {}),
+    },
+    body: JSON.stringify({ email: clean }),
+    ...opts,
+  });
+
+  let j = null;
+  try {
+    j = await r.json();
+  } catch {
+    j = { message: "Invalid JSON response" };
+  }
+
+  if (!r.ok) {
+    const e = new Error(j?.error || j?.message || `HTTP ${r.status}`);
+    e.status = r.status;
+    e.data = j;
+    throw e;
+  }
+
+  return j;
+}

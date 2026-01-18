@@ -35,6 +35,12 @@ export default function ConfirmLoanModalView({
   // Actions
   onConfirm,
 
+  // Contact email (optional)
+  showEmailInput,
+  contactEmail,
+  onContactEmailChange,
+
+
   // Optional content (so the view stays UI-only)
   statusContent,
 
@@ -262,6 +268,7 @@ export default function ConfirmLoanModalView({
               style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.10)" }}
             />
 
+            {/* ===== Payout address input ===== */}
             <div className="mt-4">
               <div className="flex items-center gap-2 mb-2">
                 <label className="block text-sm font-normal text-[#E6EDE4]">
@@ -320,6 +327,29 @@ export default function ConfirmLoanModalView({
                 )}
               </div>
             </div>
+
+            {/* ===== Payout email input if anonymous ===== */}    
+            {showEmailInput && (
+              <div className="mt-4">
+                <label className="block text-sm font-normal text-[#E6EDE4] mb-2">
+                  Email (optional)
+                </label>
+
+                <input
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => onContactEmailChange(e.target.value)}
+                  placeholder="you@email.com"
+                  className="w-full px-4 py-3 rounded-xl text-sm bg-[#161B26] text-white placeholder-white/50 caret-white border-[#1F242F] focus:border-[#95E100] focus:outline-none focus:ring-1 focus:ring-[#95E100]"
+                  style={{ borderWidth: "1.174px" }}
+                />
+
+                <p className="mt-1 text-xs text-white/50">
+                  To save access and claim your dashboard later.
+                </p>
+              </div>
+            )}
+
           </>
         ) : (
           <p className="text-sm text-white mb-4">Loading loan details...</p>

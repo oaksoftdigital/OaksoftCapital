@@ -1,15 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { getLoanById } from "../services/coinrabbit";
+import { getLoanById, saveUserEmail } from "../services/coinrabbit";
 import { useConfirmAndPayCollateral } from "../hooks/useConfirmAndPayCollateral";
 import { useValidateAddress } from "@/features/loan/hooks/useValidateAddress";
 import { useRouter } from "next/navigation";
 import LoanStatusLabel from "@/features/loan/ui/LoanStatusLabel";
 import ConfirmLoanModalView from "./ConfirmLoanModalView";
 
+import { auth } from "@/lib/firebaseClient";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfirmed }) {
+
+  //Email if is Anonymous
+  const [isAnon, setIsAnon] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+
+
   const [address, setAddress] = useState("");
 
   const router = useRouter();
@@ -63,6 +71,15 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
 
   const locked = confirmingOrPaying || !!txId || startListen;
 
+  // Listen for auth state to determine if anonymous
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setIsAnon(!!u?.isAnonymous);
+    });
+    return () => unsub();
+  }, []);
+
+
   // Start listening when txId appears
   useEffect(() => {
     if (!open) return;
@@ -76,6 +93,7 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
     setAddress("");
     setSubmitError("");
     setStartListen(false);
+    setContactEmail("");
   }, [open]);
 
   // Load loan when modal opens
@@ -131,6 +149,16 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
 
       setBusyLabel(needsRefresh ? "Refreshing deposit address..." : "Opening wallet...");
 
+      // Save email only for guest (anonymous). Best effort: do not block the flow.
+      if (isAnon && contactEmail?.trim()) {
+        try {
+          await saveUserEmail(contactEmail.trim());
+        } catch (e) {
+          console.warn("saveUserEmail failed:", e?.message || e);
+        }
+      }
+
+
       const { confirmRes, freshLoan: refreshed } = await run({
         loanId,
         payoutAddress: a,
@@ -164,6 +192,9 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
       txId={txId}
       confirmingOrPaying={confirmingOrPaying}
       isAddressValid={isAddressValid}
+      showEmailInput={isAnon}
+      contactEmail={contactEmail}
+      onContactEmailChange={setContactEmail}
       onConfirm={handleConfirm}
       statusContent={
         <LoanStatusLabel

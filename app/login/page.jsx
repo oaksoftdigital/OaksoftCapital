@@ -10,6 +10,9 @@ import { useAuth } from "@/providers/AuthProvider";
 import { signInWithGoogle } from "@/features/auth/googleSignIn";
 import { useRouter } from "next/navigation";
 
+import { saveUserEmail } from "@/features/loan/services/coinrabbit";
+
+
 export default function LoginPage() {
 
   const router = useRouter();
@@ -55,6 +58,13 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await createUserWithEmailAndPassword(auth, email, pass);
+
+      // Save user email to Firebase
+      try {
+        await saveUserEmail(email.trim());
+      } catch (e) {
+        console.warn("saveUserEmail failed:", e?.message || e);
+      }
       router.replace("/dashboard/loans");
     } catch (e) {
       console.error("Firebase signup error:", e.code, e.message, e);
@@ -91,6 +101,13 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await signInWithEmailAndPassword(auth, email, pass);
+      
+      // Save user email to Firebase
+      try {
+        await saveUserEmail(email.trim());
+      } catch (e) {
+        console.warn("saveUserEmail failed:", e?.message || e);
+      }
       router.replace("/dashboard/loans");
     } catch (e) {
       if (
@@ -117,6 +134,20 @@ export default function LoginPage() {
 
     try {
       await signInWithGoogle();
+
+      // Get the Google user's email
+      const googleEmail =
+      res?.user?.email || auth.currentUser?.email || "";
+
+      // Save user email to Firebase
+      if (googleEmail) {
+        try {
+          await saveUserEmail(googleEmail.trim());
+        } catch (e) {
+          console.warn("saveUserEmail failed:", e?.message || e);
+        }
+      }
+      // Redirect to dashboard
       router.replace("/dashboard/loans");
     } catch (e) {
       const code = e?.code;
