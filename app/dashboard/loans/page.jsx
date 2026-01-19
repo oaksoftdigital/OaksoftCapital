@@ -9,6 +9,8 @@ import LoanZonePill from "@/features/loan/ui/LoanZonePill";
 import useRefreshLoanZones from "@/features/loan/hooks/useRefreshLoanZones";
 import { usePathname } from "next/navigation";
 import TokenChip from "@/features/loan/ui/TokenChip";
+import ClaimDashboardBanner from "@/features/loan/ui/ClaimDashboardBanner";
+
 
 
 export default function Page() {
@@ -126,6 +128,9 @@ export default function Page() {
 
   return (
     <div style={{ padding: 20, display: "grid", gap: 16, maxWidth: 520 }}>
+
+      <ClaimDashboardBanner />
+      
       <h2 style={{ fontWeight: 600, fontSize: 22, marginBottom: 4 }}>My active loans</h2>
 
       {!uid && <div style={{ fontSize: 14, color: "#666" }}>Please log in.</div>}

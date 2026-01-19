@@ -8,6 +8,25 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// Read saved email for current user (anon or logged)
+export async function GET(req) {
+  try {
+    const uid = await requireUser(req);
+
+    const snap = await adminDB.collection("coinrabbit_users").doc(uid).get();
+    const email = snap.exists ? snap.data()?.email || null : null;
+
+    return NextResponse.json({ email }, { status: 200 });
+  } catch (e) {
+    console.error("Get email error:", e);
+    if (e instanceof Response) return e;
+    return NextResponse.json(
+      { error: e?.message || "Get email failed" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function POST(req) {
   try {
     // 1) auth (works for normal users AND anonymous users)

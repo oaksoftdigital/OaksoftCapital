@@ -295,3 +295,35 @@ export async function saveUserEmail(email, opts = {}) {
 
   return j;
 }
+
+// Get user email (for logged in users) from Firestore via server route
+export async function getUserEmail(opts = {}) {
+  const idToken = await getIdToken();
+  if (!idToken) throw new Error("No idToken");
+
+  const r = await fetch(`/api/user/email`, {
+    method: "GET",
+    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+      ...(opts.headers || {}),
+    },
+    ...opts,
+  });
+
+  let j = null;
+  try {
+    j = await r.json();
+  } catch {
+    j = { message: "Invalid JSON response" };
+  }
+
+  if (!r.ok) {
+    const e = new Error(j?.error || j?.message || `HTTP ${r.status}`);
+    e.status = r.status;
+    e.data = j;
+    throw e;
+  }
+
+  return j?.email ?? null; // string | null
+}
