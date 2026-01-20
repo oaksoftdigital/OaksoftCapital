@@ -1,26 +1,31 @@
 "use client";
 
+import { useRef, useState } from "react";
+
 export default function VaultPage() {
+
+  const videoRef = useRef(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
 
   const vaultCards = [
     {
-      icon: "/assets/coins.svg",
-      title: "Buy more crypto",
+      icon: "/assets/marketeq_secureCheck.svg",
+      title: "Advanced Risk Management",
       description:
-        "Tired of waiting endlessly for the all-time-high rate of your favorite coin? Keep holding your crypto and get liquidity to buy even more crypto without any hesitation.",
+        "Safeguard your investments with slippage limits, P&L stop losses, auditable, open source code",
     },
     {
-      icon: "/assets/calculator.svg",
-      title: "Optimize taxes",
+      icon: "/assets/mage_filter.svg",
+      title: "Customizable Investment Strategies",
       description:
-        "Maximize your tax efficiency. Getting a crypto loan and its spending - are non-taxable events, because they do not generate direct earnings.",
+        "Get exposure to BTC as well as time tested staking pools withing our vault",
     },
     {
-      icon: "/assets/house.svg",
-      title: "Make a huge purchase",
+      icon: "/assets/heroicons_key.svg",
+      title: "Your Funds, Your Control",
       description:
-        "Don't put your dreams on hold. Leverage your crypto and put the cash towards a major expense. Buy a house or a car, travel to a new place or pay for studies.",
+        "Fully decentralized, non-custodial investment vault designed to grow your wealth while keeping you in control.",
     },
 
   ];
@@ -98,17 +103,42 @@ export default function VaultPage() {
 
 
             {/* RIGHT */}
-            <div className="w-full md:flex-[0_0_calc(60%-40px)] md:min-w-0 md:self-stretch bg-blue-500/10 outline outline-1 outline-blue-500/30 rounded-2xl overflow-hidden flex flex-col min-h-0">
+            <div className="relative w-full md:flex-[0_0_calc(60%-40px)] md:min-w-0 md:self-stretch bg-blue-500/10 outline outline-1 outline-blue-500/30 rounded-2xl overflow-hidden flex flex-col min-h-0">
               <video
+                ref={videoRef}
                 className="w-full flex-1 object-cover min-h-0"
-                autoPlay
-                muted
-                loop
+                poster="/assets/placeholderVideoVault.jpg"
                 playsInline
                 preload="metadata"
+                controls={isVideoPlaying}
+                onPlay={() => setIsVideoPlaying(true)}
+                onPause={() => setIsVideoPlaying(false)}
+                onEnded={() => setIsVideoPlaying(false)}
               >
                 <source src="/assets/videoHero.mp4" type="video/mp4" />
               </video>
+
+              {!isVideoPlaying && (
+                <button
+                  type="button"
+                  aria-label="Play video"
+                  className="absolute bottom-[34px] right-[43px] inline-flex items-center justify-center cursor-pointer"
+                  onClick={() => {
+                    const videoEl = videoRef.current;
+                    if (!videoEl) return;
+                    videoEl.play();
+                  }}
+                >
+                  <span className="relative inline-block">
+                    <img src="/assets/Ellipse1.svg" alt="" className="block" />
+                    <img
+                      src="/assets/Play.svg"
+                      alt=""
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    />
+                  </span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -116,20 +146,19 @@ export default function VaultPage() {
         {/* New Cards Section */}
         <section className="w-full">
           <div className="mx-auto w-full max-w-[1300px] px-4 pb-12 lg:px-0">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {vaultCards.map((cardVault, idx) => (
                 <div
                   key={idx}
-                  className="bg-[#161B26] shadow-[-6px_-4px_10.3px_0_rgba(75,84,98,0.20),_0_4px_20.6px_0_rgba(0,0,0,0.50)] p-[30px_25px] flex flex-col items-start gap-[18.74px] flex-1 rounded-2xl h-auto lg:aspect-square"
+                  className="bg-[#161B26] shadow-[-6px_-4px_10.3px_0_rgba(75,84,98,0.20),_0_4px_20.6px_0_rgba(0,0,0,0.50)] p-[30px_25px] flex flex-col items-start gap-[18.74px] rounded-2xl"
                 >
-                  <div className="flex items-center gap-4">
-                    <img src={cardVault.icon} alt={cardVault.title} className="w-[50px] h-[50px]" />
-                    <h3 className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif'] font-medium text-[18px] md:text-[24px] leading-[25.8px]">
-                      {cardVault.title}
-                    </h3>
-                  </div>
+                  <img src={cardVault.icon} alt={cardVault.title} className="w-[50px] h-[50px]" />
 
-                  <p className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif']  text-[15px] leading-[24px] tracking-[0.169px]">
+                  <h3 className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif'] font-medium text-[18px] md:text-[24px] leading-[25.8px]">
+                    {cardVault.title}
+                  </h3>
+
+                  <p className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif'] text-[15px] leading-[24px] tracking-[0.169px]">
                     {cardVault.description}
                   </p>
                 </div>
