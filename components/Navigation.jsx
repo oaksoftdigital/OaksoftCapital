@@ -284,6 +284,7 @@ export default function Navigation() {
                     <MenuLink href="/strategies">Strategies</MenuLink>
                     <MenuLink href="/trade">Trade</MenuLink>
                     <MenuLink href="/loans">Loans</MenuLink>
+                    <MenuLink href="/vault">Investment Vault</MenuLink>
 
                     {showDashboard && (
                       <MenuLink href="/dashboard/loans">Dashboard</MenuLink>

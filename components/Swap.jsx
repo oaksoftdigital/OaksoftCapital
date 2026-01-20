@@ -18,7 +18,7 @@ const BASE_WIDGET_CONFIG = {
   subvariant: "swap",
   subvariantOptions: {
     wide: {
-      enableChainSidebar: true,
+      enableChainSidebar: false,
     },
   },
   appearance: "dark",
@@ -34,7 +34,7 @@ const BASE_WIDGET_CONFIG = {
       },
       background: {
         paper: "#1F2937",
-        default: "#111827",
+        default: "#151A23",
       },
     },
     shape: {

@@ -71,7 +71,7 @@ export default function LoansPage() {
             {/* LEFT - TOP (2/3) */}
             <div className="h-full rounded-2xl flex flex-col">
               <div className="flex-1 flex items-start mb-6 md:mb-8 lg:mb-0">
-                <h1 className="text-white font-['Gramatika_Trial', 'Helvetica', 'Arial', 'sans-serif'] font-medium tracking-[0.988px] text-[42px] leading-[44px] md:text-[76px] md:leading-[70px]">
+                <h1 className="text-white font-['Gramatika_Trial', 'Helvetica', 'Arial', 'sans-serif'] font-bold tracking-[0.988px] text-[42px] leading-[44px] md:text-[76px] md:leading-[70px]">
                   <span className="block">Borrow cash</span>
                   <span className="block">using Bitcoin as</span>
                   <span className="block">collateral</span>
@@ -134,7 +134,7 @@ export default function LoansPage() {
 
             {/* LEFT - BOTTOM (1/3) */}
             <div className="h-full rounded-2xl flex flex-col">
-              <h2 className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif'] font-medium tracking-[0.988px] text-[28px] leading-[64.142px] md:text-[48px]">
+              <h2 className="text-white font-['Gramatika_Trial','Helvetica','Arial','sans-serif'] font-bold tracking-[0.988px] text-[28px] leading-[64.142px] md:text-[48px]">
                 Why borrow crypto?
               </h2>
 
