@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRef } from "react";
 import { fmt } from "../features/loan/utils/formatting";
 import { optValue, optLabel, isSameAsCollateral, findByValue, getTokenLogo } from "../features/loan/utils/token";
 import useCurrencies from "../features/loan/hooks/useCurrencies";
@@ -8,6 +9,8 @@ import useEstimate from "../features/loan/hooks/useEstimate";
 import useCreateLoan from "@/features/loan/hooks/useCreateLoan";
 import TokenSelect from "../features/loan/ui/tokenSelect.jsx";
 import ConfirmLoanModal from "../features/loan/ui/ConfirmLoanModal.jsx"; 
+import ConnectWalletButton from "./ConnectWalletButton";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 export default function LoanWidget() {
   //  UI-only state
@@ -16,6 +19,10 @@ export default function LoanWidget() {
   const [amount, setAmount] = useState(""); // Collateral amount (user input)
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Ref for the connect wallet button ======
+  const connectWrapRef = useRef<HTMLSpanElement | null>(null);
+  const { isConnected } = useAppKitAccount();
+  
   // ===== Load currencies (deposit + borrow) =====
   const {
     currencies,
@@ -117,17 +124,34 @@ export default function LoanWidget() {
       }}
     >
       <div className="space-y-8">
-        <h3 
-          className="font-medium tracking-tight text-white text-base sm:text-[28px]"
-          style={{
-            fontFamily: '"Gramatika Trial", "Helvetica", "Arial", sans-serif',
-            fontStyle: 'normal',
-            lineHeight: 'normal'
-          }}
-        >
-          Loan Calculator
-        </h3>
+        <div className="flex items-center justify-between gap-4"> 
+          <h3
+            className="font-medium tracking-tight text-white text-base sm:text-[28px]"
+            style={{
+              fontFamily: '"Gramatika Trial", "Helvetica", "Arial", sans-serif',
+              fontStyle: 'normal',
+              lineHeight: 'normal'
+            }}
+          >
+            Loan Calculator
+          </h3>
+          <div
+            className="shrink-0 flex items-center gap-3 cursor-pointer select-none"
+            onClick={() => {
+              const btn = document.querySelector('[data-connect="loan"] button');
+              btn?.click();
+            }}
+          >
+            {!isConnected && (
+              <span className="text-white text-sm">Connect Wallet</span>
+            )}
 
+            <span data-connect="loan" className="pointer-events-none">
+              <ConnectWalletButton iconOnly />
+            </span>
+          </div>
+        </div>
+        
         <div className="space-y-6">
           {/* ===== Collateral (with Amount connected) ===== */}
           <div>

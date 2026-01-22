@@ -308,7 +308,7 @@ export default function Navigation() {
                     )}
 
                     <div className="mt-6 flex justify-end">
-                      <ConnectWalletButton />
+                      <ConnectWalletButton  iconOnly={true} />
                     </div>
                   </div>
                 </div>

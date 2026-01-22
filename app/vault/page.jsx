@@ -373,7 +373,7 @@ export default function VaultPage() {
 
               {/* RIGHT (60%) - Image */}
               <div
-                className="w-full md:flex-[0_0_60%] md:min-w-0 rounded-2xl overflow-hidden bg-blue-500/10 outline outline-1 outline-blue-500/30"
+                className="w-full md:flex-[0_0_60%] md:min-w-0 rounded-2xl overflow-hidden bg-[#141720] outline outline-1 outline-blue-500/30"
                 style={{
                   background: "transparent",
                 }}
@@ -381,7 +381,7 @@ export default function VaultPage() {
                 <img
                   src="/assets/screenshotVault.png"
                   alt="Get in touch"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
