@@ -208,7 +208,7 @@ const LiFiWidgetWrapper = memo(function LiFiWidgetWrapper() {
   }
 
   return (
-    <DynamicLiFiWidget integrator="OakSoft DeFi" config={config} />
+    <DynamicLiFiWidget integrator="OakSoft-DeFi" config={config} />
   );
 });
 
