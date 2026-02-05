@@ -1,4 +1,4 @@
-export default function Estrategies() {
+export default function Strategies() {
   return (
     <div className="w-full bg-transparent">
       <div
@@ -20,7 +20,7 @@ export default function Estrategies() {
             textTransform: "uppercase",
           }}
         >
-          ESTRATEGIES
+          STRATEGIES
         </h1>
         </div>
       </div>
