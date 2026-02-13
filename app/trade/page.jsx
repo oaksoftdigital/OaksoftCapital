@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import SwapColumn from "../../components/Swap";
 import ChartSmart from "../../components/ChartSmart";
+import ExecutionFlowModal from "@/components/ExecutionFlowModal";
 //fiat onramp
 import KoyweWidget from "../../components/OnRamp/KoyweWidget"; 
 import { useAccount } from "wagmi";
@@ -66,6 +67,8 @@ export default function Trade() {
 
   const [activeTab, setActiveTab] = useState("SELL"); // "SELL" | "BUY"
   const current = activeTab === "SELL" ? sell : buy;
+
+  const [showExecutionModal, setShowExecutionModal] = useState(false);
 
   // --- NEW STATE FOR TABS (SWAP vs ONRAMP) ---
   const [tradeMode, setTradeMode] = useState("SWAP"); // "SWAP" | "ONRAMP"
@@ -300,11 +303,18 @@ const handleBuyTokenChange = useCallback((t) => {
 
               </div>
 
-              {/* TOGGLE BUTTON */}
-              <div className={["mt-6 flex", isCollapsing ? "justify-center" : "justify-center lg:justify-start"].join(" ")}>
+              {/* --- CONTROL BAR (Hide Chart + How it works) --- */}
+              <div 
+                className={`mt-6 w-full flex ${
+                  isCollapsing 
+                    ? "flex-col items-center justify-center gap-4" 
+                    : "flex-col items-center gap-4 lg:flex-row" 
+                }`}
+              >
+                {/* 1. TOGGLE BUTTON (Hide/Expand Chart) */}
                 <button
                   onClick={onToggleChart}
-                  className="inline-flex items-center gap-2 rounded-xl px-5 py-2 border border-white/30 text-white hover:border-white/60 transition"
+                  className="inline-flex items-center gap-2 rounded-xl px-5 py-2 border border-white/30 text-white hover:border-white/60 transition whitespace-nowrap"
                   aria-pressed={!isHidden}
                 >
                   {isHidden ? (
@@ -319,7 +329,41 @@ const handleBuyTokenChange = useCallback((t) => {
                     </>
                   )}
                 </button>
+
+                {/* 2. HOW IT WORKS BUTTON */}
+                <button
+                  onClick={() => setShowExecutionModal(true)}
+                  className="group flex items-center gap-2 text-white/90 hover:text-white transition-colors bg-transparent border-none outline-none whitespace-nowrap"
+                >
+                  {/* Info Icon (Circle 'i') */}
+                  <svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className="opacity-70 group-hover:opacity-100 transition-opacity"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  
+                  <span className="text-sm font-medium border-b border-transparent group-hover:border-white transition-all">
+                    How it works
+                  </span>
+                </button>
               </div>
+
+              {/* --- MODAL COMPONENT (Rendered conditionally) --- */}
+              <ExecutionFlowModal 
+                isOpen={showExecutionModal} 
+                onClose={() => setShowExecutionModal(false)} 
+              />
+
             </div>
           </div>
         </div>
@@ -438,246 +482,6 @@ const handleBuyTokenChange = useCallback((t) => {
         </section>
       </div>
 
-      {/* Section Execution Flow */}
-      <div className="w-full" style={{ background: "#151A23" }}>
-        <section className="w-full flex justify-center py-[60px]">
-            {/* Card */}
-            <div
-              className="w-full max-w-[1276px] h-auto rounded-[16px] px-[60px] py-[48px] flex flex-col"
-              style={{
-                background: "#161B26",
-                filter:
-                  "drop-shadow(0 9px 25.5px rgba(0, 0, 0, 0.50)) drop-shadow(-6px -7px 42px rgba(75, 84, 98, 0.25))",
-              }}
-            >
-              {/* Row 1: Title */}
-              <div className="w-full flex justify-center mb-[40px]">
-                <h2
-                  className="text-white text-center"
-                  style={{
-                    fontFamily: '"Gramatika Trial", sans-serif',
-                    fontSize: "48px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "54px",
-                  }}
-                >
-                  Execution Flow
-                </h2>
-              </div>
-
-              {/* Row 2: columns + connectors */}
-              <div className="relative w-full">
-                {/* ===== Desktop connectors (lg+) + dots (custom positions) ===== */}
-                <div className="pointer-events-none absolute inset-0 z-0 hidden lg:block">
-                  {(() => {
-                    const CONNECTOR_W = 214;
-                    const CONNECTOR_H = 21;
-
-                    const DOT_SIZE = 10;
-                    const DOT_GAP = 6;
-
-                    // Conectores entre columnas (centros): 25%, 50%, 75%
-                    const connectors = [
-                      { mid: 25, top: 50, src: "/assets/Vector5.svg" }, // 1-2 (up)
-                      { mid: 50, top: 20, src: "/assets/Vector4.svg" }, // 2-3 (down)
-                      { mid: 75, top: 50, src: "/assets/Vector5.svg" }, // 3-4 (up)
-                    ];
-
-                    const connectorStyle = (mid, top) => ({
-                      position: "absolute",
-                      left: `calc(${mid}% - ${CONNECTOR_W / 2}px)`,
-                      top: `${top}px`,
-                      width: `${CONNECTOR_W}px`,
-                      height: `${CONNECTOR_H}px`,
-                    });
-
-                    const dotStyle = ({ mid, top, at = 1, where = "above" }) => {
-                      // at: 0..1 (porcentaje del ancho del conector)
-                      const x = CONNECTOR_W * at - DOT_SIZE / 2;
-
-                      const y =
-                        where === "above"
-                          ? top - DOT_SIZE - DOT_GAP
-                          : top + CONNECTOR_H + DOT_GAP;
-
-                      return {
-                        position: "absolute",
-                        left: `calc(${mid}% - ${CONNECTOR_W / 2}px + ${x}px)`,
-                        top: `${y}px`,
-                        width: `${DOT_SIZE}px`,
-                        height: `${DOT_SIZE}px`,
-                        borderRadius: "9999px",
-                        background: "#373D48",
-                      };
-                    };
-
-                    // Dots positions:
-                    // 1) abajo del 1er conector @25%
-                    // 2) arriba del 1er conector @75%
-                    // 3) abajo del 2do conector @50%
-                    // 4) arriba al final del 2do conector @100%
-                    // 5) arriba del 3er conector al final @100%
-                    const dots = [
-                      { c: 0, where: "below", at: 0.25 },
-                      { c: 0, where: "above", at: 0.75 },
-
-                      { c: 1, where: "below", at: 0.5 },
-                      { c: 1, where: "above", at: 0.9 },
-
-                      { c: 2, where: "above", at: 0.9 },
-                    ];
-
-                    return (
-                      <>
-                        {/* Connectors */}
-                        {connectors.map((c, i) => (
-                          <img key={i} src={c.src} alt="" style={connectorStyle(c.mid, c.top)} />
-                        ))}
-
-                        {/* Dots */}
-                        {dots.map((d, i) => {
-                          const c = connectors[d.c];
-                          return <span key={i} style={dotStyle({ mid: c.mid, top: c.top, at: d.at, where: d.where })} />;
-                        })}
-                      </>
-                    );
-                  })()}
-                </div>
-
-                {/* ===== Tablet connector (md only) ===== */}
-                <div className="pointer-events-none absolute inset-0 z-0 hidden md:block lg:hidden">
-                  <img
-                    src="/assets/Vector6.png"
-                    alt=""
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      top: "34px", // puedes ajustar si el PNG debe bajar/subir
-                      transform: "translate(-50%, 0) rotate(3.259deg)",
-                      width: "169.876px",
-                      height: "364.182px",
-                      opacity: 1,
-                    }}
-                  />
-                </div>
-                {/* ===== Mobile dots (sm only) ===== */}
-                <div className="pointer-events-none absolute inset-0 z-0 lg:hidden">
-                  {[
-                    { left: "12%", top: "26px" },
-                    { left: "78%", top: "54px" },
-                    { left: "34%", top: "210px" },
-                    { left: "86%", top: "320px" },
-                  ].map((p, i) => (
-                    <span
-                      key={i}
-                      className="absolute"
-                      style={{
-                        left: p.left,
-                        top: p.top,
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "9999px",
-                        background: "#373D48",
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Cards grid */}
-                <div className="relative z-10 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[24px]">
-                  {[
-                    {
-                      iconSrc: "/assets/icons8_bank-card.svg",
-                      title: "Connect",
-                      desc: "Connect to the dApp using your web3 supported wallets such as Metamask or Rabby etc.",
-                      iconStyle: {
-                        borderRadius: "137px",
-                        background:
-                          "linear-gradient(149deg, #00C2DC 3.34%, #007E97 102.38%)",
-                      },
-                    },
-                    {
-                      iconSrc: "/assets/iconamoon_send.svg",
-                      title: "Swap Quote",
-                      desc: "Determine the tokens and amount you want to swap and receive your output quote.",
-                      iconStyle: {
-                        borderRadius: "137px",
-                        background:
-                          "linear-gradient(149deg, #18CA70 3.34%, #00984C 102.38%)",
-                      },
-                    },
-                    {
-                      iconSrc: "/assets/ic_outline-local-offer.svg",
-                      title: "Get Best Offer",
-                      desc: "Verify the details of the transaction and confirm its accuracy.",
-                      iconStyle: {
-                        borderRadius: "137px",
-                        background:
-                          "linear-gradient(149deg, #FF783C 3.34%, #FF4F1E 102.38%)",
-                      },
-                    },
-                    {
-                      iconSrc: "/assets/line-md_bell-loop.svg",
-                      title: "Confirm and Enjoy",
-                      desc: "Confirm the swap transaction and enjoy the satisfaction of obtaining the best output.",
-                      iconStyle: {
-                        borderRadius: "137px",
-                        background:
-                          "linear-gradient(149deg, #3A8FEF 3.34%, #005FDE 102.38%)",
-                      },
-                    },
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center text-center">
-                      {/* Icon container */}
-                      <div
-                        className="flex items-center justify-center mb-[18px]"
-                        style={{
-                          ...iconBaseStyle,
-                          ...(item.iconStyle ?? {
-                            borderRadius: "12.917px",
-                            background:
-                              "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
-                          }),
-                        }}
-                      >
-                        <img src={item.iconSrc} alt="" className="w-full h-full object-contain" />
-                      </div>
-
-                      <h3
-                        className="text-white mb-[12px]"
-                        style={{
-                          fontFamily: '"Gramatika Trial", sans-serif',
-                          fontSize: "24px",
-                          fontWeight: 500,
-                          lineHeight: "25.8px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {item.title}
-                      </h3>
-
-                      <p
-                        className="text-white max-w-[260px]"
-                        style={{
-                          fontFamily: "ABeeZee, sans-serif",
-                          fontSize: "15px",
-                          fontWeight: 400,
-                          lineHeight: "24px",
-                          letterSpacing: "0.169px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {item.desc}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-            </div>
-        </section>
-      </div>
     </div>
   );
 }

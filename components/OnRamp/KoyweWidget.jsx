@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ConnectWalletButton from '../ConnectWalletButton';
 
 /**
  * KoyweWidget Component (Dynamic Import Fix)
@@ -45,8 +46,21 @@ const KoyweWidget = ({
   };
 
   if (!userAddress) {
-    return <div className="text-red-500">Please connect wallet to continue.</div>;
-  }
+      return (
+        // Usamos el mismo estilo de contenedor para mantener consistencia
+        <div className="w-full h-[400px] flex flex-col justify-center items-center bg-[#161B26] rounded-xl border border-white/10 p-8 text-center">
+          
+          {/* Texto Gris (con intensidad 400) */}
+          <p className="text-gray-400 mb-6 text-lg">
+            Please connect wallet to continue.
+          </p>
+
+          {/* Botón */}
+          <ConnectWalletButton />
+          
+        </div>
+      );
+    }
 
   return (
     <div className="w-full h-[400px] flex flex-col justify-center items-center bg-[#161B26] rounded-xl border border-white/10 p-8 text-center">
