@@ -53,7 +53,8 @@ export default function VaultPage() {
       <section
         className="w-full"
         style={{
-          background: "linear-gradient(0deg, #151A23 0%, #151A23 100%), #FFF",
+          // background: "linear-gradient(0deg, #151A23 0%, #151A23 100%), #FFF",
+          background: "transparent",
         }}
       >
         <div className="mx-auto w-full max-w-[1300px] px-4 py-10 lg:px-0">

@@ -201,7 +201,7 @@ export default function LoginPage() {
         </h1>
       </div>
 
-      <div className="flex-1 bg-[#151A23] pt-[70px] pb-[70px]">
+      <div className="flex-1 bg-transparent pt-[70px] pb-[70px]">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto">
             {user ? (
