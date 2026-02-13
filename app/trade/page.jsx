@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import SwapColumn from "../../components/Swap";
 import ChartSmart from "../../components/ChartSmart";
+//fiat onramp
+import KoyweWidget from "../../components/OnRamp/KoyweWidget"; 
+import { useAccount } from "wagmi";
 
 
 function EyeIcon(props) {
@@ -63,6 +66,12 @@ export default function Trade() {
 
   const [activeTab, setActiveTab] = useState("SELL"); // "SELL" | "BUY"
   const current = activeTab === "SELL" ? sell : buy;
+
+  // --- NEW STATE FOR TABS (SWAP vs ONRAMP) ---
+  const [tradeMode, setTradeMode] = useState("SWAP"); // "SWAP" | "ONRAMP"
+  
+  // Get user address for Koywe widget
+  const { address } = useAccount();
 
 const handleSellTokenChange = useCallback((t) => {
   setSell({
@@ -138,7 +147,7 @@ const handleBuyTokenChange = useCallback((t) => {
       </div>
 
       {/* Main Trade Section */}
-      <div className="w-full mt-[100px]" style={{ background: "#151A23" }}>
+      <div className="w-full mt-[100px]" style={{ background: "transparent" }}>
         <div className="w-full max-w-none mx-auto px-6 py-8 mt-[100px] lg:max-w-[calc(100%-200px)]">
           <div className="flex flex-col lg:flex-row gap-8 relative">
             {/* LEFT (Chart) - outer container: reserved layout width */}
@@ -227,6 +236,7 @@ const handleBuyTokenChange = useCallback((t) => {
             </div>
 
             {/* RIGHT (Swap) */}
+
             <div
               className={[
                 "transition-[width] duration-[420ms]",
@@ -236,17 +246,58 @@ const handleBuyTokenChange = useCallback((t) => {
               ].join(" ")}
               style={{ transitionDuration: `${WIDTH_MS}ms` }}
             >
+              {/* --- MODE TABS (SWAP | BUY CRYPTO) --- */}
+              {/* --- TABS --- */}
+              <div className={`flex items-center gap-6 mb-6 ${isCollapsing ? "justify-center" : "justify-center lg:justify-start"}`}>
+                  <button
+                    onClick={() => setTradeMode("SWAP")}
+                    className={`px-4 py-2 text-lg font-bold transition-colors ${
+                      tradeMode === "SWAP" 
+                      ? "text-white border-b-2 border-blue-500" 
+                      : "text-gray-500 hover:text-gray-300"
+                    }`}
+                  >
+                    SWAP
+                  </button>
+                  <button
+                    onClick={() => setTradeMode("ONRAMP")}
+                    className={`px-4 py-2 text-lg font-bold transition-colors ${
+                      tradeMode === "ONRAMP" 
+                      ? "text-white border-b-2 border-blue-500" 
+                      : "text-gray-500 hover:text-gray-300"
+                    }`}
+                  >
+                    BUY CRYPTO
+                  </button>
+              </div>
               {/* SWAP TITLE */}
               {/* <div className={["mb-6", isCollapsing ? "text-center" : "text-center lg:text-left"].join(" ")}>
                 <h2 className="text-white text-2xl font-semibold">SWAP</h2>
               </div> */}
 
               {/* component SwapColumn */}
+              {/* component Container */}
               <div className={isCollapsing ? "flex flex-col items-center w-full" : "md:flex md:justify-center lg:justify-start"}>
-                <SwapColumn
-                  onSellTokenChange={handleSellTokenChange}
-                  onBuyTokenChange={handleBuyTokenChange}
-                />
+                
+                {/* CONDITIONAL LOGIC: Check tradeMode state */}
+                {tradeMode === "SWAP" ? (
+                  // Case A: Show Swap
+                  <SwapColumn
+                    onSellTokenChange={handleSellTokenChange}
+                    onBuyTokenChange={handleBuyTokenChange}
+                  />
+                ) : (
+                  // Case B: Show Koywe Widget (On-Ramp)
+                  // We wrap it in a div to control max width, matching the Swap UI style
+                  <div className="w-full max-w-[480px]">
+                      <KoyweWidget 
+                          userAddress={address} 
+                          symbol="USDC" 
+                          network="polygon" 
+                      />
+                  </div>
+                )}
+
               </div>
 
               {/* TOGGLE BUTTON */}
@@ -275,13 +326,13 @@ const handleBuyTokenChange = useCallback((t) => {
       </div>
 
       {/* Section Experience institutional-grade trading infrastructure */}
-      <div className="w-full" style={{ background: "#151A23" }}>
+      <div className="w-full" style={{ background: "transparent" }}>
         <section className="w-full flex justify-center py-[60px]">
             {/* Card */}
             <div
               className="w-full max-w-[1276px] h-auto rounded-[16px] px-[60px] py-[48px] flex flex-col"
               style={{
-                background: "#161B26",
+                background: "transparent",
                 filter:
                   "drop-shadow(0 9px 25.5px rgba(0, 0, 0, 0.50)) drop-shadow(-6px -7px 42px rgba(75, 84, 98, 0.25))",
               }}

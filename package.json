@@ -12,6 +12,7 @@
     "@bigmi/client": "^0.6.0",
     "@bigmi/core": "^0.6.0",
     "@bigmi/react": "^0.6.0",
+    "@koyweforest/koywe-ramp-sdk": "^0.0.52",
     "@lifi/sdk": "^3.12.14",
     "@lifi/widget": "^3.33.1",
     "@mysten/dapp-kit": "^0.19.5",
