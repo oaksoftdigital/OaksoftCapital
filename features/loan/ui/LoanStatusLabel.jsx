@@ -30,6 +30,17 @@ function fmtHash(h) {
   return `${s.slice(0, 6)}…${s.slice(-4)}`;
 }
 
+// Maps CoinRabbit status to our UI stepper (0 to 3)
+function determineStep(resp) {
+  const depTx = String(resp?.deposit?.transaction_status || "").toLowerCase();
+  
+  if (depTx.includes("finished")) return 3;   // Step 4: Success
+  if (depTx.includes("confirming")) return 2; // Step 3: Sending Loan
+  if (depTx.includes("waiting")) return 1;    // Step 2: Processing
+  
+  return 0; // Step 1: Awaiting Collateral
+}
+
 export default function LoanStatusLabel({
   loanId,
   start = false, // start polling only after user sent collateral tx
@@ -39,6 +50,7 @@ export default function LoanStatusLabel({
   stopOnDepositFinished = true,
   track = "deposit",
   onFinished,
+  onStepChange,
 }) {
   const [snapshot, setSnapshot] = useState(null);
   const [error, setError] = useState("");
@@ -103,9 +115,14 @@ export default function LoanStatusLabel({
 
       try {
         const data = await getLoanById(loanId);
+
         setSnapshot(data);
 
         const resp = data?.response || {};
+
+        // let know wich step we are for the stepper UI (0 to 3):
+        const step = determineStep(resp);
+        onStepChange?.(step);
 
         // 1) Stop if deposit tx is finished (waiting/confirming/finished)
         if (stopOnDepositFinished && isDepositFinished(resp)) {

@@ -7,6 +7,7 @@ import { useValidateAddress } from "@/features/loan/hooks/useValidateAddress";
 import { useRouter } from "next/navigation";
 import LoanStatusLabel from "@/features/loan/ui/LoanStatusLabel";
 import ConfirmLoanModalView from "./ConfirmLoanModalView";
+import ProgressLoanModalView from "@/features/loan/ui/ProgressLoanModalView";
 
 import { auth } from "@/lib/firebaseClient";
 import { onAuthStateChanged } from "firebase/auth";
@@ -31,6 +32,8 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
   const [freshError, setFreshError] = useState("");
 
   const [busyLabel, setBusyLabel] = useState("");
+
+  const [currentStep, setCurrentStep] = useState(0);
 
   const hasSummary = !!summary;
 
@@ -175,40 +178,92 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
 
 
   return (
-    <ConfirmLoanModalView
-      open={open}
-      onClose={onClose}
-      summary={summary}
-      loanId={loanId}
-      address={address}
-      onAddressChange={(v) => setAddress(v)}
-      validating={validating}
-      remoteValid={remoteValid}
-      addressError={addressError}
-      loadingFresh={loadingFresh}
-      freshError={freshError}
-      submitError={submitError}
-      flowError={flowError}
-      txId={txId}
-      confirmingOrPaying={confirmingOrPaying}
-      isAddressValid={isAddressValid}
-      showEmailInput={isAnon}
-      contactEmail={contactEmail}
-      onContactEmailChange={setContactEmail}
-      onConfirm={handleConfirm}
-      statusContent={
+    <>
+      {/* 1. The core logic: Polling runs independently of the UI in the background */}
+      {startListen && (
         <LoanStatusLabel
           loanId={loanId}
           start={true}
           finishedLabel="finished"
+          onStepChange={setCurrentStep}
           onFinished={() => {
             onClose?.();
             router.push("/dashboard/loans");
             router.refresh();
           }}
         />
-      }
-    />
+      )}
+
+      {/* 2. The UI: Show one modal or another depending on whether there is a txId */}
+      {!txId ? (
+        <ConfirmLoanModalView
+          open={open}
+          onClose={onClose}
+          summary={summary}
+          loanId={loanId}
+          address={address}
+          onAddressChange={(v) => setAddress(v)}
+          validating={validating}
+          remoteValid={remoteValid}
+          addressError={addressError}
+          loadingFresh={loadingFresh}
+          freshError={freshError}
+          submitError={submitError}
+          flowError={flowError}
+          txId={txId}
+          confirmingOrPaying={confirmingOrPaying}
+          isAddressValid={isAddressValid}
+          showEmailInput={isAnon}
+          contactEmail={contactEmail}
+          onContactEmailChange={setContactEmail}
+          onConfirm={handleConfirm}
+        />
+      ) : (
+        <ProgressLoanModalView
+          open={open}
+          onClose={onClose}
+          currentStep={currentStep}
+          
+        />
+      )}
+    </>
   );
+  // return (
+  //   <ConfirmLoanModalView
+  //     open={open}
+  //     onClose={onClose}
+  //     summary={summary}
+  //     loanId={loanId}
+  //     address={address}
+  //     onAddressChange={(v) => setAddress(v)}
+  //     validating={validating}
+  //     remoteValid={remoteValid}
+  //     addressError={addressError}
+  //     loadingFresh={loadingFresh}
+  //     freshError={freshError}
+  //     submitError={submitError}
+  //     flowError={flowError}
+  //     txId={txId}
+  //     confirmingOrPaying={confirmingOrPaying}
+  //     isAddressValid={isAddressValid}
+  //     showEmailInput={isAnon}
+  //     contactEmail={contactEmail}
+  //     onContactEmailChange={setContactEmail}
+  //     onConfirm={handleConfirm}
+  //     statusContent={
+  //       <LoanStatusLabel
+  //         loanId={loanId}
+  //         start={true}
+  //         finishedLabel="finished"
+  //         onStepChange={setCurrentStep}
+  //         onFinished={() => {
+  //           onClose?.();
+  //           router.push("/dashboard/loans");
+  //           router.refresh();
+  //         }}
+  //       />
+  //     }
+  //   />
+  // );
 
 }
