@@ -24,8 +24,8 @@ export default function ConfirmLoanModalView({
   // Top messages
   loadingFresh,
   freshError,
-  submitError,
-  flowError,
+  submitError={displayError},
+  // flowError={null},
 
   // Flow state
   txId,
@@ -114,8 +114,8 @@ export default function ConfirmLoanModalView({
         )}
         {freshError && <p className="text-xs text-red-500 mb-2">{freshError}</p>}
 
-        {(submitError || flowError) && (
-          <p className="text-xs text-red-500 mb-2">{submitError || flowError}</p>
+        {submitError && (
+          <p className="text-xs text-red-500 mb-2">{submitError}</p>
         )}
 
         {!!txId && (

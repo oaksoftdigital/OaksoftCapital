@@ -29,7 +29,11 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
   // Fresh loan state
   const [freshLoan, setFreshLoan] = useState(null);
   const [loadingFresh, setLoadingFresh] = useState(false);
+
+  // Error handling states
   const [freshError, setFreshError] = useState("");
+  const [ignoredFlowError, setIgnoredFlowError] = useState(null);
+  const [displayError, setDisplayError] = useState(""); 
 
   const [busyLabel, setBusyLabel] = useState("");
 
@@ -74,6 +78,35 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
 
   const locked = confirmingOrPaying || !!txId || startListen;
 
+
+
+
+  // Smart error formatting
+  const activeFlowError = flowError === ignoredFlowError ? null : flowError;
+  const rawError = submitError || activeFlowError;
+  useEffect(() => {
+    if (!rawError) {
+      setDisplayError("");
+      return;
+    }
+
+    // 1. Change to console.log so Next.js doesn't show the red dev overlay
+    console.log("Wallet Tx Error (Debug):", rawError);
+
+    // 2. Safely convert to string
+    const errorString = typeof rawError === "string" ? rawError : (rawError?.message || JSON.stringify(rawError));
+    const lower = errorString.toLowerCase();
+
+    // 3. Set human readable message based on keywords
+    if (lower.includes("insufficient funds") || lower.includes("gas * price + value") || lower.includes("balance")) {
+      setDisplayError("You don't have enough funds to cover the collateral and network fees.");
+    } else if (lower.includes("reject") || lower.includes("denied") || lower.includes("user denied")) {
+      setDisplayError("Transaction was cancelled in your wallet.");
+    } else {
+      setDisplayError("Transaction failed. Please check your wallet or network.");
+    }
+  }, [rawError]);
+
   // Listen for auth state to determine if anonymous
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -97,6 +130,8 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
     setSubmitError("");
     setStartListen(false);
     setContactEmail("");
+    setIgnoredFlowError(flowError);
+    setDisplayError("");
   }, [open]);
 
   // Load loan when modal opens
@@ -198,7 +233,11 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
       {!txId ? (
         <ConfirmLoanModalView
           open={open}
-          onClose={onClose}
+          // onClose={onClose}
+          onClose={() => {
+            if (rawError) router.refresh();
+            onClose();
+          }}
           summary={summary}
           loanId={loanId}
           address={address}
@@ -208,8 +247,8 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
           addressError={addressError}
           loadingFresh={loadingFresh}
           freshError={freshError}
-          submitError={submitError}
-          flowError={flowError}
+          submitError={displayError}
+          // flowError={flowError}
           txId={txId}
           confirmingOrPaying={confirmingOrPaying}
           isAddressValid={isAddressValid}

@@ -20,7 +20,7 @@ export default function LoanWidget() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   // Ref for the connect wallet button ======
-  const connectWrapRef = useRef<HTMLSpanElement | null>(null);
+  const connectWrapRef = useRef(null);
   const { isConnected } = useAppKitAccount();
   
   // ===== Load currencies (deposit + borrow) =====
