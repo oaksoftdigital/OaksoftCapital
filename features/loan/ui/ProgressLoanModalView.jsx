@@ -7,7 +7,14 @@ export default function ProgressLoanModalView({
   open,
   onClose,
   currentStep = 0, // 0 = Awaiting, 1 = Processing, 2 = Sending, 3 = Success
-  onTestStepChange
+  onTestStepChange,
+  loanId = "Loading...",
+  depositAddress = "Loading...",
+  collateralAmount = "0",
+  collateralCode = "...",
+  receiveAmount = "0",
+  receiveCode = "...",
+  userAddress = "...",
 }) {
   const [mounted, setMounted] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -30,16 +37,7 @@ export default function ProgressLoanModalView({
   // Calculate safe step number for the header
   const displayStep = Math.min(currentStep + 1, 4);
 
-  const loanId = "LN-987654321"; // draft for now, will be passed as prop later
-  // --- MOCK FOR COLLATERAL DETAILS ---
-  const depositAddress = "0x1234567890abcdef1234567890abcdef12345678";
-  const collateralAmount = "0.15";
-  const collateralCode = "ETH";
 
-  // --- MOCK FOR RECEIVING AMOUNT (WILL BE PASSED AS PROP LATER) ---
-  const receiveAmount = "36,552.5316";
-  const receiveCode = "USDC";
-  const userAddress = "0x1234...abcd";
   
   const handleCopy = () => {
     navigator.clipboard.writeText(loanId);

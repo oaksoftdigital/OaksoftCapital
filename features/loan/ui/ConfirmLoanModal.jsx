@@ -262,7 +262,13 @@ export default function ConfirmLoanModal({ open, onClose, loan, summary, onConfi
           open={open}
           onClose={onClose}
           currentStep={currentStep}
-          
+          loanId={loanId}
+          depositAddress={effectiveLoan?.response?.deposit?.send_address || ""}
+          collateralAmount={summary?.collateralAmount || "0"}
+          collateralCode={summary?.collateralCode || ""}
+          receiveAmount={summary?.loanAmount || "0"}
+          receiveCode={summary?.borrowCode || ""}
+          userAddress={address}
         />
       )}
     </>
