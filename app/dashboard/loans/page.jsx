@@ -330,9 +330,9 @@ export default function Page() {
           </div>
         );
       })}
-      <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "8px 0" }} />
+      {/* <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "8px 0" }} />
 
-      <h3 style={{ fontWeight: 600, fontSize: 18, margin: 0 }}>History</h3>
+      <h3 style={{ fontWeight: 600, fontSize: 18, margin: 0 }}>History</h3> */}
 
       {loadingHistory && <div style={{ fontSize: 14, color: "#666" }}>Loading history...</div>}
       {historyErr && <div style={{ color: "red", fontSize: 12 }}>{historyErr}</div>}
