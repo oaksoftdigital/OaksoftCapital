@@ -194,63 +194,142 @@ export default function Page() {
         <div style={{ fontSize: 14, color: "#666" }}>No active loans yet.</div>
       )}
 
-      {loans.map((l) => (
-        <div
-          key={l.id}
-          style={{
-            width: "100%",
-            height: "112px",
-            borderRadius: "12.917px",
-            border: "2.348px solid rgba(255, 255, 255, 0.10)",
-            background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
-            boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
-            backdropFilter: "blur(20.138px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 20px", // Updated padding for fixed height
-            gap: 12,
-          }}
-        >
-          <div style={{ display: "grid", gap: 4 }}>
-            <div style={{ fontWeight: 600 }}>Loan {l.loanId || l.id}</div>
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-              <TokenChip
-                logo={l.ui?.collateral?.logo}
-                code={l.ui?.collateral?.code}
-                network={l.ui?.collateral?.network}
-              />
-              <span style={{ color: "#999" }}>→</span>
-              <TokenChip
-                logo={l.ui?.borrow?.logo}
-                code={l.ui?.borrow?.code}
-                network={l.ui?.borrow?.network}
-              />
-            </div>
+      {/* Mobile responsive styles */}
+      <style>{`
+        @media (max-width: 768px) {
+          .responsive-card {
+            flex-direction: column !important;
+            height: auto !important;
+            padding: 20px !important;
+            gap: 20px !important;
+          }
+          .responsive-col {
+            width: 100% !important;
+            padding: 0 !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+          }
+          .resp-text-xl { font-size: 20px !important; }
+          .resp-text-lg { font-size: 18px !important; }
+          .resp-text-sm { font-size: 14px !important; }
+          .resp-icon-box { width: 48px !important; height: 48px !important; }
+          .resp-icon-img { width: 28px !important; height: 28px !important; }
+        }
+      `}</style>
 
-            <div style={{ fontSize: 12, color: "#666" }}>
-              status: {l.status || l.coinrabbit?.status || "-"}
-            </div>
-            <LoanZonePill zone={l.coinrabbit?.currentZone} showWhenUnknown />
-          </div>
+      {loans.map((l) => {
+        // Fix: Check multiple paths for the amount depending on how it was saved in Firebase
+        const rawAmount = l.deposit?.amount || l.deposit?.expected_amount || l.requestPayload?.deposit?.expected_amount || 0;
+        const amount = Number(rawAmount).toFixed(3);
+        
+        const currentRateVal = l.currentRate ? Number(l.currentRate).toFixed(2) : "0.00";
+        const marginCallVal = l.liquidationPrice ? Number(l.liquidationPrice).toFixed(2) : "0.00";
+        const dateStr = l.createdAt ? new Date(l.createdAt).toLocaleDateString() : "-";
 
-          <button
-            onClick={() => router.push(`/dashboard/loans/${encodeURIComponent(l.loanId || l.id)}`)}
+        return (
+          <div
+            key={l.id}
+            className="responsive-card"
             style={{
-              padding: "10px 14px",
-              background: "var(--color-primary-500)",
-              color: "#222",
-              border: "none",
-              borderRadius: 8,
-              fontWeight: 600,
-              cursor: "pointer",
+              width: "100%",
+              height: "112px",
+              borderRadius: "12.917px",
+              border: "2.348px solid rgba(255, 255, 255, 0.10)",
+              background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+              boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+              backdropFilter: "blur(20.138px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "24px 33px 24px 25px",
+              gap: 12,
             }}
           >
-            Open
-          </button>
-        </div>
-      ))}
+            {/* Left Column (50% on desktop, 100% on mobile) */}
+            <div className="responsive-col" style={{ display: "flex", width: "50%", justifyContent: "space-between", alignItems: "center", paddingRight: "20px" }}>
+              
+              {/* Left Side: Icon Column + Text Column */}
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                
+                {/* Icon inside a round background */}
+                <div className="resp-icon-box" style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0
+                }}>
+                  <img 
+                    src={l.ui?.collateral?.logo} 
+                    alt="logo" 
+                    className="resp-icon-img"
+                    style={{ width: 40, height: 40, borderRadius: "50%" }} 
+                  />
+                </div>
 
+                {/* Amount and Date stacked vertically */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                  <span className="resp-text-xl" style={{ color: "#fff", fontSize: "26px", fontWeight: 500, lineHeight: 1 }}>
+                    {amount} {l.ui?.collateral?.network}
+                  </span>
+                  <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>
+                    {dateStr}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Side: Current Rate */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>Current Rate</span>
+                <span className="resp-text-lg" style={{ color: "#fff", fontSize: "22px" }}>${currentRateVal}</span>
+              </div>
+            </div>
+
+            {/* Right Column (50% on desktop, 100% on mobile) */}
+            <div className="responsive-col" style={{ display: "flex", width: "50%", justifyContent: "space-between", alignItems: "center", paddingLeft: "20px" }}>
+              
+              {/* Left: Margin Call */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>Margin Call</span>
+                <span className="resp-text-lg" style={{ color: "#fff", fontSize: "22px" }}>${marginCallVal}</span>
+              </div>
+
+              {/* Center: Loan Health Status */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>Loan Health Status</span>
+                <LoanZonePill zone={l.coinrabbit?.currentZone} showWhenUnknown />
+              </div>
+
+              {/* Right: Round Open Button */}
+              <button
+                onClick={() => router.push(`/dashboard/loans/${encodeURIComponent(l.loanId || l.id)}`)}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#4a515c")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#323841")}
+                style={{
+                  display: "flex",
+                  width: "38px",
+                  height: "38px",
+                  padding: "11.742px 0",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: "83px",
+                  border: "1px solid rgba(255, 255, 255, 0.25)",
+                  background: "#323841",
+                  cursor: "pointer",
+                  transition: "background 0.2s ease",
+                  flexShrink: 0
+                }}
+              >
+                <img src="/assets/RightAngle.svg" alt="Open loan" style={{ width: 14, height: 14 }} />
+              </button>
+
+            </div>
+          </div>
+        );
+      })}
       <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "8px 0" }} />
 
       <h3 style={{ fontWeight: 600, fontSize: 18, margin: 0 }}>History</h3>
@@ -262,10 +341,19 @@ export default function Page() {
         <div style={{ fontSize: 14, color: "#666" }}>No closed loans yet.</div>
       )}
 
-      {history.map((l) => (
-        <div
-          key={l.id}
-          style={{
+      {history.map((l) => {
+        const rawAmount = l.deposit?.amount || l.deposit?.expected_amount || l.requestPayload?.deposit?.expected_amount || 0;
+        const amount = Number(rawAmount).toFixed(3);
+        
+        const currentRateVal = l.currentRate ? Number(l.currentRate).toFixed(2) : "0.00";
+        const marginCallVal = l.liquidationPrice ? Number(l.liquidationPrice).toFixed(2) : "0.00";
+        const dateStr = l.createdAt ? new Date(l.createdAt).toLocaleDateString() : "-";
+
+        return (
+          <div
+            key={l.id}
+            className="responsive-card"
+            style={{
               width: "100%",
               height: "112px",
               borderRadius: "12.917px",
@@ -276,47 +364,82 @@ export default function Page() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "0 20px", // Updated padding for fixed height
+              padding: "24px 33px 24px 25px",
               gap: 12,
-            }}
-        >
-          <div style={{ display: "grid", gap: 4 }}>
-            <div style={{ fontWeight: 600 }}>Loan {l.loanId || l.id}</div>
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-              <TokenChip
-                logo={l.ui?.collateral?.logo}
-                code={l.ui?.collateral?.code}
-                network={l.ui?.collateral?.network}
-              />
-              <span style={{ color: "#999" }}>→</span>
-              <TokenChip
-                logo={l.ui?.borrow?.logo}
-                code={l.ui?.borrow?.code}
-                network={l.ui?.borrow?.network}
-              />
-            </div>
-
-            <div style={{ fontSize: 12, color: "#666" }}>
-              phase: {l.phase || "-"} | status: {l.status || l.coinrabbit?.status || "-"}
-            </div>
-          </div>
-
-          <button
-            onClick={() => router.push(`/dashboard/loans/${encodeURIComponent(l.loanId || l.id)}`)}
-            style={{
-              padding: "10px 14px",
-              background: "#eee",
-              color: "#444",
-              border: "none",
-              borderRadius: 8,
-              fontWeight: 600,
-              cursor: "pointer",
+              opacity: 0.85, // Slight opacity for closed loans
             }}
           >
-            View
-          </button>
-        </div>
-      ))}
+            {/* Left Column (50%) */}
+            <div className="responsive-col" style={{ display: "flex", width: "50%", justifyContent: "space-between", alignItems: "center", paddingRight: "20px" }}>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div className="resp-icon-box" style={{
+                  width: 64, height: 64, borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                }}>
+                  <img src={l.ui?.collateral?.logo} alt="logo" className="resp-icon-img" style={{ width: 40, height: 40, borderRadius: "50%" }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                  <span className="resp-text-xl" style={{ color: "#fff", fontSize: "26px", fontWeight: 500, lineHeight: 1 }}>
+                    {amount} {l.ui?.collateral?.network}
+                  </span>
+                  <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>
+                    {dateStr}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>Current Rate</span>
+                <span className="resp-text-lg" style={{ color: "#fff", fontSize: "22px" }}>${currentRateVal}</span>
+              </div>
+            </div>
+
+            {/* Right Column (50%) */}
+            <div className="responsive-col" style={{ display: "flex", width: "50%", justifyContent: "space-between", alignItems: "center", paddingLeft: "20px" }}>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start" }}>
+                <span className="resp-text-sm" style={{ color: "#9BA2AE", fontSize: "18px", fontWeight: 400 }}>Margin Call</span>
+                <span className="resp-text-lg" style={{ color: "#fff", fontSize: "22px" }}>${marginCallVal}</span>
+              </div>
+
+              {/* Center: REPAID Status */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{
+                    width: "22px", height: "22px", borderRadius: "50%", background: "#9BA2AE",
+                    display: "flex", alignItems: "center", justifyContent: "center"
+                  }}>
+                    {/* Inline SVG Checkmark */}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                  <span className="resp-text-lg" style={{ color: "#fff", fontSize: "20px", fontWeight: 500 }}>
+                    {l.phase === "LIQUIDATED" ? "Liquidated" : "Repaid"} 
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => router.push(`/dashboard/loans/${encodeURIComponent(l.loanId || l.id)}`)}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#4a515c")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#323841")}
+                style={{
+                  display: "flex", width: "38px", height: "38px", padding: "11.742px 0",
+                  justifyContent: "center", alignItems: "center", borderRadius: "83px",
+                  border: "1px solid rgba(255, 255, 255, 0.25)", background: "#323841",
+                  cursor: "pointer", transition: "background 0.2s ease", flexShrink: 0
+                }}
+              >
+                <img src="/assets/RightAngle.svg" alt="View loan" style={{ width: 14, height: 14 }} />
+              </button>
+
+            </div>
+          </div>
+        );
+      })}
 
     </div>
   );
