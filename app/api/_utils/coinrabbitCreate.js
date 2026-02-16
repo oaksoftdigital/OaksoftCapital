@@ -31,10 +31,22 @@ export async function saveCoinrabbitLoan({ uid, data, payload }) {
       deposit: data?.response?.deposit || null,
       borrow: data?.response?.loan || null,
       requestPayload: payload ?? null,
+      // Margin Call (Liquidation Price)
+      liquidationPrice: data?.response?.liquidation_price || null,
+      // APR
+      interestPercent: data?.response?.interest_percent || null,
+      // Monthly Interest
+      monthlyInterest: data?.response?.interest_amounts?.month || null,
+      // Current Rate
+      currentRate:
+        data?.response?.deposit?.usdt_rate ||
+        data?.response?.deposit?.rate ||
+        null,
+      // -------------------------------------
       createdAt: Date.now(),
       updatedAt: Date.now(),
     },
-    { merge: true }
+    { merge: true },
   );
 
   return loanId;

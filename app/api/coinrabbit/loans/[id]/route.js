@@ -37,7 +37,7 @@ export async function GET(req, { params }) {
     if (!loanId) {
       return NextResponse.json(
         { error: "Missing loanId in URL" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +68,7 @@ export async function GET(req, { params }) {
       const resp = data?.response || data?.data?.response || {};
 
       const depTx = String(
-        resp?.deposit?.transaction_status || ""
+        resp?.deposit?.transaction_status || "",
       ).toLowerCase(); // waiting|confirming|finished
       const coinrabbitStatus = resp?.status || null;
 
@@ -92,6 +92,34 @@ export async function GET(req, { params }) {
           updatedAt: now,
           phase: nextPhase,
           status: coinrabbitStatus || current.status || null,
+
+          // --- NEW FIELDS SYNCED FROM API ---
+          // Liquidation Price (Margin Call)
+          liquidationPrice:
+            resp?.liquidation_price ?? current.liquidationPrice ?? null,
+          // APR
+          interestPercent:
+            resp?.interest_percent ?? current.interestPercent ?? null,
+          // Monthly Interest
+          monthlyInterest:
+            resp?.interest_amounts?.month ?? current.monthlyInterest ?? null,
+          // Current Rate (USDT rate or standard rate)
+          currentRate:
+            resp?.deposit?.usdt_rate ??
+            resp?.deposit?.rate ??
+            current.currentRate ??
+            null,
+          // Transaction Hash (from deposit or payin_tx)
+          txnHash:
+            resp?.deposit?.transaction_hash ??
+            resp?.deposit?.payin_tx?.hash ??
+            current.txnHash ??
+            null,
+          // Full Repayment amount
+          fullRepayment:
+            resp?.repayment?.total_amount ?? current.fullRepayment ?? null,
+          // ----------------------------------
+
           coinrabbit: {
             ...(current.coinrabbit || {}),
             lastSyncedAt: now,
@@ -100,7 +128,7 @@ export async function GET(req, { params }) {
             currentZone: resp?.current_zone ?? null,
           },
         },
-        { merge: true }
+        { merge: true },
       );
     }
 
@@ -109,7 +137,7 @@ export async function GET(req, { params }) {
     console.error("Get loan by id error:", e);
     return NextResponse.json(
       { error: e?.message || "Get loan by id failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

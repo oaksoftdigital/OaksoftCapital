@@ -127,11 +127,62 @@ export default function Page() {
 
 
   return (
-    <div style={{ padding: 20, display: "grid", gap: 16, maxWidth: 520 }}>
+    // Main container wrap
+    <div style={{ padding: 20, display: "grid", gap: 16, width: "100%", maxWidth: 1260, margin: "0 auto" }}>
 
       <ClaimDashboardBanner />
       
-      <h2 style={{ fontWeight: 600, fontSize: 22, marginBottom: 4 }}>My active loans</h2>
+      {/* Header section */}
+      <div style={{
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0",
+        gap: 12,
+        marginBottom: 16
+      }}>
+        
+        {/* Left column: Title and Description */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <h1 style={{ margin: 0, fontSize: 32, fontWeight: 600, color: "#fff" }}>Loan Dashboard</h1>
+          <p style={{
+            margin: 0,
+            color: "#9BA2AE",
+            fontFamily: '"Gramatika Trial", sans-serif',
+            fontSize: "16px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "24px",
+            letterSpacing: "1.125px",
+          }}>
+            Manage your Active Loans and Collaterals
+          </p>
+        </div>
+
+        {/* Right column: Button navigating to /loans */}
+        <button 
+          onClick={() => router.push('/loans')}
+          style={{
+            display: "flex",
+            width: "234px",
+            padding: "20px 30px",
+            flexDirection: "row", 
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "10px",
+            borderRadius: "8px",
+            background: "#95E100",
+            border: "none",
+            color: "#000",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          <img src="/assets/Calculator2.svg" alt="Calculator icon" style={{ width: 24, height: 24 }} />
+          <span>Loan Calculator</span>
+        </button>
+      </div>
 
       {!uid && <div style={{ fontSize: 14, color: "#666" }}>Please log in.</div>}
 
@@ -147,12 +198,17 @@ export default function Page() {
         <div
           key={l.id}
           style={{
-            border: "1.5px solid #a0ff2f",
-            borderRadius: 10,
-            padding: 12,
+            width: "100%",
+            height: "112px",
+            borderRadius: "12.917px",
+            border: "2.348px solid rgba(255, 255, 255, 0.10)",
+            background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+            boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+            backdropFilter: "blur(20.138px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            padding: "0 20px", // Updated padding for fixed height
             gap: 12,
           }}
         >
@@ -210,15 +266,19 @@ export default function Page() {
         <div
           key={l.id}
           style={{
-            border: "1px solid #ddd",
-            borderRadius: 10,
-            padding: 12,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            opacity: 0.85,
-          }}
+              width: "100%",
+              height: "112px",
+              borderRadius: "12.917px",
+              border: "2.348px solid rgba(255, 255, 255, 0.10)",
+              background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+              boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+              backdropFilter: "blur(20.138px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0 20px", // Updated padding for fixed height
+              gap: 12,
+            }}
         >
           <div style={{ display: "grid", gap: 4 }}>
             <div style={{ fontWeight: 600 }}>Loan {l.loanId || l.id}</div>
