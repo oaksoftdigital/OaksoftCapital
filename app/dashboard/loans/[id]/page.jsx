@@ -237,31 +237,348 @@ export default function Page() {
   });
 
   return (
-    <div style={{ padding: 20, display: "grid", gap: 12, maxWidth: 460 }}>
-      <h2 style={{ fontWeight: 700, fontSize: 22 }}>Loan {loanId || "-"}</h2>
+    <div style={{ padding: 20, display: "grid", gap: 12, width: "100%", maxWidth: 1260, margin: "0 auto" }}>
+      
+      {/* Loading & Error States */}
+      {loading && <div style={{ fontSize: 16, color: "#9BA2AE", marginBottom: 20 }}>Loading loan details...</div>}
+      {err && <div style={{ fontSize: 16, color: "#ff4d4f", marginBottom: 20 }}>{err}</div>}
 
-      {loading && <div style={{ fontSize: 12, color: "#666" }}>Loading…</div>}
-      {err && <div style={{ fontSize: 12, color: "red" }}>{err}</div>}
+      {/* 1. TOP ROW: Back Link */}
+      <div style={{ width: "100%", marginBottom: 24 }}>
+        <Link 
+          href="/dashboard/loans" 
+          style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: 12, 
+            textDecoration: "none",
+            color: "#9BA2AE",
+            fontFamily: '"Gramatika Trial", sans-serif',
+            fontSize: "18px",
+            fontWeight: 400,
+            letterSpacing: "1.125px"
+          }}
+        >
+          {/* Back Icon with round background */}
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            <img src="/assets/LeftAngle.svg" alt="Back" style={{ width: 14, height: 14 }} />
+          </div>
+          Back to Loan Dashboard
+        </Link>
+      </div>
 
-      {!loading && !err && (
-        <div style={{ fontSize: 12, color: "#666" }}>
-          phase: {phase || "-"} | status: {status || "-"}
+      {/* 2. MAIN HEADER ROW: Icon/Title + Badge */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", width: "100%", marginBottom: 32 }}>
+        
+        {/* Left Column: Icon + Text Col */}
+        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          
+          {/* Collateral Icon (Large, round background) */}
+          <div style={{
+            width: 72, 
+            height: 72,
+            borderRadius: "50%",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0
+          }}>
+            {docData?.ui?.collateral?.logo && (
+              <img 
+                src={docData.ui.collateral.logo} 
+                alt="Collateral" 
+                style={{ width: 44, height: 44, borderRadius: "50%" }} 
+              />
+            )}
+          </div>
+
+          {/* Text Column: Loan Pair + ID */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{
+              color: "#FFF",
+              fontFamily: '"Gramatika Trial", sans-serif',
+              fontSize: "32px",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "70px", 
+              letterSpacing: "0.988px",
+              marginTop: "-12px" // Offsets the large line-height to align with the icon
+            }}>
+              Loan {docData?.ui?.collateral?.code || "..."}/{docData?.ui?.borrow?.code || "..."}
+            </div>
+            <div style={{
+              color: "#9BA2AE",
+              fontFamily: '"Gramatika Trial", sans-serif',
+              fontSize: "16px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "24px",
+              letterSpacing: "1.125px",
+              marginTop: "-12px" // Pulls the ID up closer to the title
+            }}>
+              ID {loanId || "-"}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: ACTIVE Badge */}
+        {isActive && (
+          <div style={{
+            display: "inline-flex",
+            padding: "6px 10px 5px 10px",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            borderRadius: "6px",
+            background: "rgba(149, 225, 0, 0.30)",
+            color: "#95E100", 
+            fontWeight: 600,
+            fontSize: "14px",
+            marginTop: "16px" // Aligns the badge nicely with the top text
+          }}>
+            ACTIVE
+          </div>
+        )}
+      </div>
+
+      {/* --- TEMP LAYOUT GRID --- */}
+      {/* Hide this section if loading, error, or not active (adjust logic later as needed) */}
+      {!loading && !err && isActive && (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr", // 2/3 left, 1/3 right
+          gap: "24px",
+          width: "100%",
+          marginBottom: "32px"
+        }}>
+          
+          {/* LEFT COLUMN (2/3) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            
+            {/* Left Row 1: 3 metric cards (33% each) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+              
+              {/* Card 1: Deposit */}
+              <div style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "8px",
+                padding: "20px",
+                borderRadius: "12.917px",
+                border: "2.348px solid rgba(255, 255, 255, 0.10)",
+                background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+                boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(20.138px)",
+              }}>
+                <span style={{ color: "#9CA3AF", fontSize: "17px", fontWeight: 400, fontStyle: "normal" }}>
+                  Deposit
+                </span>
+                <span style={{ color: "#FFF", fontSize: "24px", fontWeight: 500, fontStyle: "normal" }}>
+                  {fmtAmount(docData?.deposit?.amount || docData?.deposit?.expected_amount || docData?.requestPayload?.deposit?.expected_amount || 0, 3)} {docData?.ui?.collateral?.code || ""}
+                </span>
+              </div>
+
+              {/* Card 2: Loan */}
+              <div style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "8px",
+                padding: "20px",
+                borderRadius: "12.917px",
+                border: "2.348px solid rgba(255, 255, 255, 0.10)",
+                background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+                boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(20.138px)",
+              }}>
+                <span style={{ color: "#9CA3AF", fontSize: "17px", fontWeight: 400, fontStyle: "normal" }}>
+                  Loan
+                </span>
+                <span style={{ color: "#FFF", fontSize: "24px", fontWeight: 500, fontStyle: "normal" }}>
+                  {fmtAmount(docData?.borrow?.amount || docData?.borrow?.expected_amount || docData?.requestPayload?.loan?.expected_amount || 0, 2)} {docData?.ui?.borrow?.code || ""}
+                </span>
+              </div>
+
+              {/* Card 3: Full Repayment */}
+              <div style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "8px",
+                padding: "20px",
+                borderRadius: "12.917px",
+                border: "2.348px solid rgba(255, 255, 255, 0.10)",
+                background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+                boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)",
+                backdropFilter: "blur(20.138px)",
+              }}>
+                <span style={{ color: "#9CA3AF", fontSize: "17px", fontWeight: 400, fontStyle: "normal" }}>
+                  Full Repayment
+                </span>
+                <span style={{ color: "#FFF", fontSize: "24px", fontWeight: 500, fontStyle: "normal" }}>
+                  {/* Using the field we added to Firebase yesterday */}
+                  {fmtAmount(docData?.fullRepayment || 0, 2)} {docData?.ui?.borrow?.code || ""}
+                </span>
+              </div>
+
+            </div>
+
+            {/* Left Row 2: 2 buttons (50% each) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+              
+              {/* Increase Button */}
+              <Link
+                href={`/dashboard/loans/${encodeURIComponent(loanId)}/increase`}
+                style={{
+                  display: "flex",
+                  height: "64px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "12px",
+                  borderRadius: "8px",
+                  background: "#005FFF",
+                  color: "#FFF",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  fontSize: "16px"
+                }}
+              >
+                <img src="/assets/TrendUp.svg" alt="Increase" style={{ width: 20, height: 20 }} />
+                Increase
+              </Link>
+
+              {/* Repay (Pledge) Button */}
+              <Link
+                href={`/dashboard/loans/${encodeURIComponent(loanId)}/pledge`}
+                style={{
+                  display: "flex",
+                  height: "64px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "12px",
+                  borderRadius: "8px",
+                  background: "#95E100", // Tu color de acento
+                  color: "#000",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  fontSize: "16px"
+                }}
+              >
+                <img src="/assets/ClockClockwise.svg" alt="Repay" style={{ width: 20, height: 20 }} />
+                Repay
+              </Link>
+
+            </div>
+
+            {/* Left Row 3: Loan Details Card */}
+            <div 
+              className="flex flex-col gap-5 w-full p-[25px] rounded-[12.917px] border-[2.348px] border-white/10 backdrop-blur-[20.14px]"
+              style={{
+                background: "linear-gradient(149deg, rgba(255, 255, 255, 0.05) 3.34%, rgba(25, 120, 237, 0.10) 102.38%)",
+                boxShadow: "0 14.091px 137.856px 0 rgba(0, 0, 0, 0.25)"
+              }}
+            >
+              {/* Top Row: Title */}
+              <h2 className="text-white text-2xl font-medium text-left m-0">
+                Loan Details
+              </h2>
+
+              {/* Bottom Row: 2 Columns at 50% */}
+              <div className="flex w-full">
+                
+                {/* Left Column */}
+                <div className="w-1/2 flex flex-col gap-4 text-left">
+                  
+                  {/* Loan ID Data */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">Loan ID</p>
+                    <p className="text-white text-[22px] font-normal m-0">{docData?.loanId || loanId || "-"}</p>
+                  </div>
+
+                  {/* APR Data */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">APR</p>
+                    <p className="text-white text-[22px] font-normal m-0">{docData?.interestPercent ? `${docData.interestPercent}%` : "-"}</p>
+                  </div>
+
+                  {/* Duration Data: Check if lifetime is 1 for 30 Days, otherwise Unlimited */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">Duration</p>
+                    <p className="text-white text-[22px] font-normal m-0">
+                      {docData?.requestPayload?.lifetime === 1 ? "30 Days" : "Unlimited"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="w-1/2 flex flex-col gap-4 text-left">
+                  
+                  {/* Current Rate Data */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">Current rate</p>
+                    <p className="text-white text-[22px] font-normal m-0">
+                      {docData?.currentRate && docData?.ui 
+                        ? `${fmtAmount(docData.currentRate, 2)} ${docData.ui.collateral?.code}/${docData.ui.borrow?.code}` 
+                        : "-"}
+                    </p>
+                  </div>
+
+                  {/* Monthly Interest Data */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">Monthly Interest</p>
+                    <p className="text-white text-[22px] font-normal m-0">{docData?.monthlyInterest ? `${fmtAmount(docData.monthlyInterest, 2)}%` : "-"}</p>
+                  </div>
+
+                  {/* LTV Data: Using correct path requestPayload.loan.ltv_percent */}
+                  <div>
+                    <p className="text-[#9BA2AE] text-lg font-normal mb-1">LTV</p>
+                    <p className="text-white text-[22px] font-normal m-0">
+                      {docData?.requestPayload?.ltv_percent 
+                        ? `${(Number(docData.requestPayload.ltv_percent) * 100).toFixed(0)}%` 
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+          {/* RIGHT COLUMN (1/3) */}
+          <div style={{ 
+            background: "rgba(200, 200, 200, 0.3)", 
+            borderRadius: "8px",
+            // The height automatically stretches to match the left column thanks to CSS Grid!
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+            Right Column (1/3)
+          </div>
+
         </div>
       )}
-      {docData?.ui && (
-        <>
-          <TokenChip
-            logo={docData.ui.borrow?.logo}
-            code={docData.ui.borrow?.code}
-            network={docData.ui.borrow?.network}
-          />
-          <TokenChip
-            logo={docData.ui.collateral?.logo}
-            code={docData.ui.collateral?.code}
-            network={docData.ui.collateral?.network}
-          />
-        </>
-      )}
+      {/* ------------------------ */}
+
+
 
 
       {/* ACTIVE: danger zone bar */}
@@ -287,6 +604,13 @@ export default function Page() {
           </Link>
         </>
       )}
+
+
+
+
+
+
+
 
       {/* CLOSED / LIQUIDATED: no buttons, show summary */}
       {!loading && !err && !isActive && isClosedLike && closedSummary && (
@@ -367,10 +691,6 @@ export default function Page() {
           This loan is not active yet. Please wait for deposit confirmation.
         </div>
       )}
-
-      <Link href="/dashboard/loans" style={{ fontSize: 12, color: "#666", marginTop: 8 }}>
-        ← Back
-      </Link>
     </div>
   );
 }
