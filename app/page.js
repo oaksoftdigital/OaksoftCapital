@@ -19,13 +19,13 @@ export default function Home() {
             lineHeight: "normal",
           }}
         >
-          Oaksoft Digital Fund
+          Oaksoft Capital Fund
         </h1>
 
         {/* Paragraph block: centered on mobile/tablet, left on desktop */}
-        <div className="w-full flex justify-center lg:justify-end">
+        <div className="w-full flex justify-center lg:justify-center">
           <p
-            className="text-white w-full max-w-[625px] text-right"
+            className="text-white w-full max-w-[625px] text-left"
             style={{
               fontSize: "16px",
               lineHeight: "1.7",

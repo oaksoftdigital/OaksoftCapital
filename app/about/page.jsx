@@ -28,7 +28,7 @@ export default function About() {
         <div className="w-full py-8" style={{ background: "transparent", paddingTop: "70px" }}>
           <div className="max-w-[800px] mx-auto px-[30px] md:px-[100px] lg:px-0">
             <p
-              className="text-white text-center"
+              className="text-white text-left"
               style={{
                 fontSize: "16px",
                 lineHeight: "1.7",
@@ -39,7 +39,7 @@ export default function About() {
               Crypto is revolutionizing technology, markets, and business models by enabling programmable blockchains to become the backbone of financial systems, government and data integrity. Every asset class will eventually be digitized, and crypto is the game-changer driving this transformation. 
             </p>
             <p
-              className="text-white text-center"
+              className="text-white text-left"
               style={{
                 fontSize: "16px",
                 lineHeight: "1.7",
@@ -55,7 +55,7 @@ export default function About() {
         <div className="w-full py-8" style={{ background: "transparent" }}>
           <div className="max-w-[800px] mx-auto px-[30px] md:px-[100px] lg:px-0">
             <p
-              className="text-white text-center"
+              className="text-white text-left"
               style={{
                 fontSize: "16px",
                 lineHeight: "1.7",
@@ -66,7 +66,7 @@ export default function About() {
               We are a diverse team of venture investors, traders, software engineers, data scientists, operators, and risk managers committed to building this globally connected industry.             We consider it essential to assist in managing and securing digital assets, using quantitative frameworks to optimize portfolio performance, while mitigating risks like volatility and asset security.
             </p>
                         <p
-              className="text-white text-center"
+              className="text-white text-left"
               style={{
                 fontSize: "16px",
                 lineHeight: "1.7",

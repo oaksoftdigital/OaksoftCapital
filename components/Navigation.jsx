@@ -129,14 +129,14 @@ export default function Navigation() {
                   style={{
                     fontFamily: "var(--font-abhaya-libre), serif",
                     fontSize: "30px",
-                    width: "262px",
+                    width: "270px",
                     height: "35px",
                     marginTop: "34px",
                     marginLeft: "43px",
                     fontWeight: 800,
                   }}
                 >
-                  Oaksoft Digital Fund
+                  Oaksoft Capital Fund
                 </span>
 
                 {/* Mobile Logo */}
@@ -145,14 +145,14 @@ export default function Navigation() {
                   style={{
                     fontFamily: "var(--font-abhaya-libre), serif",
                     fontSize: "20px",
-                    width: "175px",
+                    width: "180px",
                     height: "24px",
                     marginTop: "22px",
                     marginLeft: "24px",
                     fontWeight: 800,
                   }}
                 >
-                  Oaksoft Digital Fund
+                  Oaksoft Capital Fund
                 </span>
               </Link>
             )}
@@ -172,16 +172,16 @@ export default function Navigation() {
             <button
               type="button"
               onClick={toggleMenu}
-              className="hidden md:inline-flex flex-col justify-center items-end focus:outline-none cursor-pointer p-3 hover:bg-gray-800/20 rounded-lg transition-colors relative z-50"
+              className="hidden md:inline-flex flex-col justify-center items-end focus:outline-none cursor-pointer p-5 hover:bg-gray-800/20 rounded-lg transition-colors relative z-50"
               aria-controls="desktop-menu"
               aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
-              <div className="relative w-6 h-4 flex flex-col justify-center items-end">
+              <div className="relative w-8 h-6 flex flex-col justify-center items-end">
                 {isMenuOpen ? (
                   <>
                     <div
-                      className="absolute w-6 h-0.5 bg-primary-500 transition-all duration-300 transform rotate-45"
+                      className="absolute w-8 h-0.5 bg-primary-500 transition-all duration-300 transform rotate-45"
                       style={{
                         backgroundColor: "#95E100",
                         top: "50%",
@@ -189,7 +189,7 @@ export default function Navigation() {
                       }}
                     />
                     <div
-                      className="absolute w-6 h-0.5 bg-primary-500 transition-all duration-300 transform -rotate-45"
+                      className="absolute w-8 h-0.5 bg-primary-500 transition-all duration-300 transform -rotate-45"
                       style={{
                         backgroundColor: "#95E100",
                         top: "50%",
@@ -200,16 +200,16 @@ export default function Navigation() {
                 ) : (
                   <>
                     <div
-                      className="w-6 h-0.5 bg-primary-500 transition-all duration-300 mb-1"
+                      className="w-8 h-0.5 bg-primary-500 transition-all duration-300 mb-1"
                       style={{ backgroundColor: "#95E100" }}
                     />
                     <div
-                      className="w-3 h-0.5 bg-primary-500 transition-all duration-300 mb-1"
+                      className="w-5 h-0.5 bg-primary-500 transition-all duration-300 mb-1"
                       style={{ backgroundColor: "#95E100" }}
                     />
                     <div
                       className="h-0.5 bg-primary-500 transition-all duration-300"
-                      style={{ backgroundColor: "#95E100", width: "18px" }}
+                      style={{ backgroundColor: "#95E100", width: "26px" }}
                     />
                   </>
                 )}
