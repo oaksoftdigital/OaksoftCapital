@@ -346,19 +346,27 @@ return (
         {/* ACTIVE Status Badge */}
         {isActive && (
           <div style={{
-            display: "inline-flex",
-            padding: "6px 10px 5px 10px",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "10px",
-            borderRadius: "6px",
-            background: "rgba(149, 225, 0, 0.30)",
-            color: "#95E100", 
-            fontWeight: 600,
-            fontSize: "14px",
-            marginTop: "16px"
+            display: "inline-flex", padding: "6px 10px 5px 10px", justifyContent: "center",
+            alignItems: "center", gap: "10px", borderRadius: "6px",
+            background: "rgba(149, 225, 0, 0.30)", color: "#95E100", 
+            fontWeight: 600, fontSize: "14px", marginTop: "16px"
           }}>
             ACTIVE
+          </div>
+        )}
+
+        {/* REPAID Status Badge (Closed loans) */}
+        {isClosedLike && (
+          <div style={{
+            display: "inline-flex", padding: "6px 10px 5px 10px", justifyContent: "center",
+            alignItems: "center", gap: "6px", borderRadius: "6px",
+            background: "#323841", color: "#FFF", 
+            fontWeight: 600, fontSize: "14px", marginTop: "16px"
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#95E100" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Repaid
           </div>
         )}
       </div>
@@ -377,9 +385,10 @@ return (
       `}</style>
 
       {/* ========================================== */}
-      {/* 5. ACTIVE LOAN DASHBOARD                     */}
+      {/* 5. ACTIVE & CLOSED LOAN DASHBOARD */}
+      {/* Show the same UI for both active and closed loans */}
       {/* ========================================== */}
-      {!loading && !err && isActive && (
+      {!loading && !err && (isActive || isClosedLike) && (
         <div 
           className="main-layout-grid"
           style={{
@@ -439,26 +448,36 @@ return (
               </div>
             </div>
 
-            {/* Actions Grid */}
+            {/* Actions Grid: Disable and gray out buttons if the loan is closed */}
             <div className="buttons-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
               <Link 
-                href={`/dashboard/loans/${encodeURIComponent(loanId)}/increase`}
+                href={isClosedLike ? "#" : `/dashboard/loans/${encodeURIComponent(loanId)}/increase`}
                 style={{
                   display: "flex", height: "64px", justifyContent: "center", alignItems: "center", gap: "12px",
-                  borderRadius: "8px", background: "#005FFF", color: "#FFF", textDecoration: "none", fontWeight: 600, fontSize: "16px"
+                  borderRadius: "8px", 
+                  background: isClosedLike ? "#323841" : "#005FFF", 
+                  color: isClosedLike ? "#9BA2AE" : "#FFF", 
+                  textDecoration: "none", fontWeight: 600, fontSize: "16px",
+                  pointerEvents: isClosedLike ? "none" : "auto", 
+                  cursor: isClosedLike ? "not-allowed" : "pointer"
                 }}
               >
-                <img src="/assets/TrendUp.svg" alt="Increase" style={{ width: 20, height: 20 }} /> Increase
+                <img src="/assets/TrendUp.svg" alt="Increase" style={{ width: 20, height: 20, opacity: isClosedLike ? 0.4 : 1 }} /> Increase
               </Link>
               
               <Link 
-                href={`/dashboard/loans/${encodeURIComponent(loanId)}/pledge`}
+                href={isClosedLike ? "#" : `/dashboard/loans/${encodeURIComponent(loanId)}/pledge`}
                 style={{
                   display: "flex", height: "64px", justifyContent: "center", alignItems: "center", gap: "12px",
-                  borderRadius: "8px", background: "#95E100", color: "#000", textDecoration: "none", fontWeight: 600, fontSize: "16px"
+                  borderRadius: "8px", 
+                  background: isClosedLike ? "#323841" : "#95E100", 
+                  color: isClosedLike ? "#9BA2AE" : "#000", 
+                  textDecoration: "none", fontWeight: 600, fontSize: "16px",
+                  pointerEvents: isClosedLike ? "none" : "auto", 
+                  cursor: isClosedLike ? "not-allowed" : "pointer"
                 }}
               >
-                <img src="/assets/ClockClockwise.svg" alt="Repay" style={{ width: 20, height: 20 }} /> Repay
+                <img src="/assets/ClockClockwise.svg" alt="Repay" style={{ width: 20, height: 20, opacity: isClosedLike ? 0.4 : 1 }} /> Repay
               </Link>
             </div>
 
@@ -545,55 +564,9 @@ return (
         </div>
       )}
 
-      {/* ========================================== */}
-      {/* 6. CLOSED / LIQUIDATED STATE                 */}
-      {/* ========================================== */}
-      {!loading && !err && !isActive && isClosedLike && closedSummary && (
-        <div style={{
-          border: "1px solid #222", borderRadius: 12, padding: 16, background: "#23272f",
-          display: "grid", gap: 14, color: "#f3f3f3", boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
-        }}>
-          <div style={{ fontWeight: 800, fontSize: 17, color: "#fff" }}>Final summary</div>
-
-          <div style={{ fontSize: 14, lineHeight: 1.5, color: "#e0e0e0" }}>
-            <b style={{ color: "#fff" }}>Opened:</b> {fmtMs(closedSummary.openedAtMs)} <br />
-            <b style={{ color: "#fff" }}>Closed:</b> {fmtMs(closedSummary.closedAtMs)}{" "}
-            <span style={{ color: "#b0b0b0" }}>{closedSummary.duration !== "-" ? `(${closedSummary.duration})` : ""}</span><br />
-            <b style={{ color: "#fff" }}>Confirmed:</b> {fmtMs(closedSummary.confirmedAtMs)}
-          </div>
-
-          <div style={{ fontSize: 14, lineHeight: 1.5, color: "#e0e0e0" }}>
-            <b style={{ color: "#fff" }}>Collateral:</b> {fmtAmount(closedSummary.collateralAmount)} {closedSummary.collateralCode || "-"}{" "}
-            <span style={{ color: "#b0b0b0" }}>({closedSummary.collateralNetwork || "-"})</span><br />
-            <b style={{ color: "#fff" }}>Borrow:</b> {fmtAmount(closedSummary.borrowAmount)} {closedSummary.borrowCode || "-"}{" "}
-            <span style={{ color: "#b0b0b0" }}>({closedSummary.borrowNetwork || "-"})</span><br />
-            <b style={{ color: "#fff" }}>LTV:</b> {Number.isFinite(closedSummary.ltvPct) ? `${fmtAmount(closedSummary.ltvPct, 2)}%` : "-"}
-          </div>
-
-          <div style={{ fontSize: 14, lineHeight: 1.5, color: "#e0e0e0" }}>
-            <b style={{ color: "#fff" }}>Payout address:</b>{" "}
-            {closedSummary.payoutAddress ? (
-              closedSummary.payoutExplorer 
-                ? <a href={closedSummary.payoutExplorer} target="_blank" rel="noreferrer" style={{ color: "#7ec4fa", textDecoration: "underline" }}>{shortAddr(closedSummary.payoutAddress)}</a>
-                : shortAddr(closedSummary.payoutAddress)
-            ) : "-"}<br />
-            <b style={{ color: "#fff" }}>Deposit address:</b>{" "}
-            {closedSummary.depositAddress ? (
-              closedSummary.depositExplorer 
-                ? <a href={closedSummary.depositExplorer} target="_blank" rel="noreferrer" style={{ color: "#7ec4fa", textDecoration: "underline" }}>{shortAddr(closedSummary.depositAddress)}</a>
-                : shortAddr(closedSummary.depositAddress)
-            ) : "-"}
-          </div>
-
-          <div style={{ fontSize: 13, color: "#b0b0b0", lineHeight: 1.4 }}>
-            <b style={{ color: "#fff" }}>Deposit tx status:</b> {closedSummary.depositTxStatus || "-"}<br />
-            <b style={{ color: "#fff" }}>Last synced:</b> {fmtMs(closedSummary.lastSyncedAt)}
-          </div>
-        </div>
-      )}
 
       {/* ========================================== */}
-      {/* 7. PENDING STATE                             */}
+      {/* 6. PENDING STATE                             */}
       {/* ========================================== */}
       {!loading && !err && !isActive && !isClosedLike && (
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -602,7 +575,7 @@ return (
       )}
 
       {/* ========================================== */}
-      {/* 8. TRANSACTION HISTORY                       */}
+      {/* 7. TRANSACTION HISTORY                       */}
       {/* ========================================== */}
       {/* Render the transaction history component passing the current loanId */}
       <TransactionLoanHistory loanId={loanId} />
