@@ -11,6 +11,9 @@ import LoanDangerZoneBar from "@/features/loan/ui/LoanDangerZoneBar";
 import { getLoanById } from "@/features/loan/services/coinrabbit";
 import TokenChip from "@/features/loan/ui/TokenChip";
 
+// Import the history component to display the loan's transaction record
+import TransactionLoanHistory from "@/components/TransactionLoanHistory";
+
 
 
 /**
@@ -597,6 +600,12 @@ return (
           This loan is not active yet. Please wait for deposit confirmation.
         </div>
       )}
+
+      {/* ========================================== */}
+      {/* 8. TRANSACTION HISTORY                       */}
+      {/* ========================================== */}
+      {/* Render the transaction history component passing the current loanId */}
+      <TransactionLoanHistory loanId={loanId} />
 
     </div>
   );

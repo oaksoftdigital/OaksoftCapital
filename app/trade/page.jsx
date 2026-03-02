@@ -4,9 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import SwapColumn from "../../components/Swap";
 import ChartSmart from "../../components/ChartSmart";
 import ExecutionFlowModal from "@/components/ExecutionFlowModal";
-//fiat onramp
-import KoyweWidget from "../../components/OnRamp/KoyweWidget"; 
-import { useAccount } from "wagmi";
+
 
 
 function EyeIcon(props) {
@@ -35,6 +33,17 @@ function displayToken(t, fallback = "TOKEN") {
   if (t?.name) return String(t.name).toUpperCase().split(" ")[0];
   if (t?.address) return shorten(t.address);
   return fallback;
+}
+
+function FiatOnrampDisabled() {
+  return (
+    <div className="w-full max-w-[480px] rounded-xl border border-white/10 bg-white/5 p-6 text-center">
+      <h3 className="text-white text-lg font-semibold">Buy Crypto</h3>
+      <p className="mt-2 text-white/70 text-sm">
+        Fiat on-ramp is temporarily disabled.
+      </p>
+    </div>
+  );
 }
 
 export default function Trade() {
@@ -72,9 +81,6 @@ export default function Trade() {
 
   // --- NEW STATE FOR TABS (SWAP vs ONRAMP) ---
   const [tradeMode, setTradeMode] = useState("SWAP"); // "SWAP" | "ONRAMP"
-  
-  // Get user address for Koywe widget
-  const { address } = useAccount();
 
 const handleSellTokenChange = useCallback((t) => {
   setSell({
@@ -290,15 +296,8 @@ const handleBuyTokenChange = useCallback((t) => {
                     onBuyTokenChange={handleBuyTokenChange}
                   />
                 ) : (
-                  // Case B: Show Koywe Widget (On-Ramp)
-                  // We wrap it in a div to control max width, matching the Swap UI style
-                  <div className="w-full max-w-[480px]">
-                      <KoyweWidget 
-                          userAddress={address} 
-                          symbol="USDC" 
-                          network="polygon" 
-                      />
-                  </div>
+                  // Case B: Fiat on-ramp (Koywe removed; Halliday migration in progress)
+                  <FiatOnrampDisabled />
                 )}
 
               </div>
